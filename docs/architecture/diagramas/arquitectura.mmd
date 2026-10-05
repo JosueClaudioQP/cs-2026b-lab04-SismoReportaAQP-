@@ -1,89 +1,111 @@
 flowchart TB
 
-    %% =========================
+    %% ==========================================
     %% ACTORES
-    %% =========================
+    %% ==========================================
 
     Ciudadano["👤 Ciudadano"]
     Operador["👨‍💼 Operador"]
 
-    %% =========================
+    %% ==========================================
     %% CLIENTES
-    %% =========================
+    %% ==========================================
 
     subgraph CLIENTES["Clientes"]
-        AppMovil["📱 Aplicación móvil"]
-        SQLite["💾 SQLite local<br/>Cola offline"]
-        PanelWeb["🖥️ Panel web de operaciones"]
-    end
 
-    %% =========================
-    %% BACKEND
-    %% =========================
+        subgraph MOVIL["Aplicación móvil"]
 
-    subgraph BACKEND["Backend SismoReporta AQP - Monolito Modular"]
-
-        API["API REST"]
-
-        subgraph MODULOS["Módulos del sistema"]
-
-            Ingesta["Módulo de Ingesta<br/>RF-01, RF-02, RF-03, RF-04"]
-
-            Operaciones["Módulo de Operaciones<br/>RF-05, RF-06, RF-07"]
+            UI["Interfaz de registro"]
+            Sync["🔄 Sync Manager<br/>Reintentos + Backoff + Jitter"]
+            SQLite["💾 SQLite local<br/>Reportes pendientes"]
 
         end
 
-        Cola["📨 Cola de mensajes<br/>Persistente"]
-
-        Worker["⚙️ Worker de procesamiento<br/>asíncrono"]
+        PanelWeb["🖥️ Panel web de operaciones"]
 
     end
 
-    %% =========================
-    %% DATOS
-    %% =========================
+    %% ==========================================
+    %% BACKEND
+    %% ==========================================
+
+    subgraph BACKEND["Backend SismoReporta AQP - Monolito Modular"]
+
+        API["API REST<br/>Controladores HTTP"]
+
+        subgraph MODULOS["Módulos"]
+
+            Ingesta["📥 Módulo de Ingesta<br/>RF-01 a RF-04"]
+
+            Operaciones["📊 Módulo de Operaciones<br/>RF-05 a RF-07"]
+
+        end
+
+        Cola["📨 Cola persistente<br/>Metadata + referencias"]
+
+        Worker["⚙️ Worker interno<br/>Procesamiento asíncrono"]
+
+    end
+
+    %% ==========================================
+    %% ALMACENAMIENTO
+    %% ==========================================
 
     subgraph DATOS["Almacenamiento"]
 
-        BD["🗄️ Base de datos<br/>Reportes y estados"]
+        BD["🗄️ Base de datos<br/>Reportes + estados + UUID"]
 
-        Evidencias["🖼️ Almacenamiento<br/>de fotografías"]
+        Fotos["🖼️ Almacenamiento de fotografías"]
 
     end
 
-    %% =========================
+    %% ==========================================
     %% SERVICIO EXTERNO
-    %% =========================
+    %% ==========================================
 
-    Mapas["🌐 Servicio externo<br/>de mapas"]
+    Mapas["🌐 Servicio externo de mapas"]
 
-    %% =========================
-    %% FLUJO CIUDADANO
-    %% =========================
+    %% ==========================================
+    %% CIUDADANO
+    %% ==========================================
 
-    Ciudadano --> AppMovil
+    Ciudadano --> UI
 
-    AppMovil --> SQLite
+    UI --> SQLite
 
-    AppMovil -->|"HTTPS / JSON"| API
+    UI -->|"Crear reporte"| Sync
 
-    %% =========================
-    %% INGESTA
-    %% =========================
+    Sync -->|"HTTPS / JSON liviano"| API
+
+    %% ==========================================
+    %% SINCRONIZACIÓN OFFLINE
+    %% ==========================================
+
+    SQLite -.->|"Reportes pendientes"| Sync
+
+    %% ==========================================
+    %% API Y MÓDULO DE INGESTA
+    %% ==========================================
 
     API --> Ingesta
 
-    Ingesta -->|"Publicar reporte"| Cola
+    Ingesta -->|"Validar UUID + publicar"| Cola
+
+    Ingesta -->|"HTTP 202 tras persistir"| API
+
+    %% ==========================================
+    %% PROCESAMIENTO ASÍNCRONO
+    %% ==========================================
 
     Cola --> Worker
 
-    Worker -->|"Persistir reporte"| BD
+    Worker -->|"Persistir metadata"| BD
 
-    Worker -->|"Procesar evidencia"| Evidencias
+    Worker -->|"Guardar / asociar evidencia"| Fotos
 
-    %% =========================
+    %% ==========================================
     %% OPERACIONES
-    %% =========================
+    %% ==========================================
 
     Operador --> PanelWeb
 
@@ -93,14 +115,14 @@ flowchart TB
 
     Operaciones -->|"Consultar / actualizar"| BD
 
-    %% =========================
-    %% SERVICIO EXTERNO
-    %% =========================
+    %% ==========================================
+    %% MAPAS
+    %% ==========================================
 
-    Operaciones -->|"Consultar ubicación"| Mapas
+    PanelWeb -->|"Visualizar ubicación"| Mapas
 
-    %% =========================
-    %% DEPENDENCIAS INTERNAS
-    %% =========================
+    %% ==========================================
+    %% RELACIONES INTERNAS
+    %% ==========================================
 
     Ingesta -.->|"Delegar procesamiento"| Worker

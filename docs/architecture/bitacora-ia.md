@@ -275,3 +275,107 @@ Afirmaciones corregidas
 Después de revisar las alternativas y aplicar una matriz de decisión
 ponderada, se seleccionó A1: Monolito Modular con Ingesta Asíncrona
 Simplificada, con una puntuación de 4.40/5.
+
+### IA-03 — Revisión del diagrama arquitectónico
+
+**Herramienta:** Gemini
+
+Actúa como revisor de arquitectura de software.
+
+Estamos diseñando el diagrama arquitectónico de SismoReporta AQP.
+
+La arquitectura seleccionada mediante una matriz de decisión es:
+
+"Monolito Modular con Ingesta Asíncrona Simplificada".
+
+El diseño propuesto contiene:
+
+- Ciudadano.
+- Aplicación móvil.
+- SQLite local para almacenamiento offline.
+- Panel web para operadores.
+- API REST.
+- Módulo de Ingesta.
+- Módulo de Operaciones.
+- Cola de mensajes persistente.
+- Worker de procesamiento asíncrono.
+- Base de datos.
+- Almacenamiento de fotografías.
+- Servicio externo de mapas.
+
+Flujos principales:
+
+Ciudadano → Aplicación móvil → API REST → Módulo de Ingesta
+→ Cola → Worker → Base de datos.
+
+Operador → Panel web → API REST → Módulo de Operaciones
+→ Base de datos.
+
+La aplicación móvil también utiliza SQLite para almacenar
+reportes cuando no existe conectividad.
+
+TAREA:
+
+Revisa críticamente este diseño antes de implementarlo
+en un diagrama Mermaid.
+
+Identifica:
+
+1. Componentes innecesarios.
+2. Componentes que podrían faltar.
+3. Dependencias incorrectas.
+4. Posibles puntos únicos de fallo.
+5. Problemas relacionados con la sincronización offline.
+6. Problemas relacionados con duplicación de reportes.
+7. Problemas relacionados con fotografías.
+8. Si el flujo de ingesta asíncrona es coherente con los drivers
+   de disponibilidad, rendimiento y fiabilidad.
+9. Si el diseño sigue siendo coherente con un equipo de 3 personas
+   y un MVP de 1 mes.
+
+No agregues funcionalidades que no estén justificadas.
+Distingue entre una recomendación y un requisito obligatorio.
+
+Presenta la respuesta en una tabla:
+
+Elemento | Observación | Severidad | 
+
+Resultado: Se identificaron problemas relacionados con el
+manejo de fotografías, idempotencia, sincronización offline,
+persistencia de la cola y dependencia del servicio externo de mapas.
+
+Decisiones posteriores:
+
+Se agregó un Sync Manager a la aplicación móvil.
+Se incorporó un UUID único por reporte.
+Se estableció persistencia para la cola.
+Se desacopló el almacenamiento de fotografías.
+El servicio de mapas quedó fuera del flujo crítico de ingesta.
+El Worker se mantiene dentro del monolito para reducir complejidad.
+Se mantiene una única BD durante el MVP.
+
+
+---
+
+# 11. E3 ya queda prácticamente terminado
+
+Nuestra estructura queda:
+
+```text
+docs/
+└── architecture/
+    ├── drivers.md
+    ├── matriz-decision.md
+    ├── bitacora-ia.md       ← IA-01, IA-02, IA-03
+    │
+    ├── adr/
+    │   ├── 000-plantilla.md
+    │   ├── 001-estilo-arquitectonico.md
+    │   ├── 002-decision.md
+    │   └── 003-decision.md
+    │
+    └── diagramas/
+        ├── arquitectura.mmd ← ACTUALIZADO
+        ├── alternativa.puml
+        └── img/
+            └── arquitectura.png
