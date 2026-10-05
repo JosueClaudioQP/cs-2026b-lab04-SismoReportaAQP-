@@ -1,0 +1,96 @@
+@startuml
+title SismoReporta AQP - Alternativa A3\nCliente-Servidor N-Capas Síncrono
+
+skinparam componentStyle rectangle
+skinparam shadowing false
+
+actor "Ciudadano" as ciudadano
+actor "Operador" as operador
+
+package "Clientes" {
+
+    component "Aplicación móvil" as movil {
+        component "Interfaz de usuario" as ui
+        database "SQLite local" as sqlite
+    }
+
+    component "Panel web\nOperador" as panel
+}
+
+package "Servidor SismoReporta AQP" {
+
+    package "Capa de Presentación" {
+        component "API REST" as api
+    }
+
+    package "Capa de Negocio" {
+        component "Gestión de reportes" as negocio
+        component "Gestión de operaciones" as operaciones
+    }
+
+    package "Capa de Datos" {
+        database "Base de datos" as bd
+        folder "Almacenamiento\nde fotografías" as fotos
+    }
+}
+
+cloud "Servicio externo\nde mapas" as mapas
+
+' ==========================================
+' CIUDADANO
+' ==========================================
+
+ciudadano --> ui : Registrar reporte
+
+ui --> sqlite : Guardar reporte\noffline
+
+ui --> api : HTTPS / JSON\nSolicitud síncrona
+
+' ==========================================
+' FLUJO CLIENTE-SERVIDOR
+' ==========================================
+
+api --> negocio : Procesar reporte
+
+negocio --> bd : INSERT / UPDATE
+
+negocio --> fotos : Guardar evidencia
+
+api --> ui : HTTP 200/201
+
+' ==========================================
+' OPERADOR
+' ==========================================
+
+operador --> panel : Consultar reportes
+
+panel --> api : HTTPS / REST
+
+api --> operaciones : Consultar / actualizar
+
+operaciones --> bd : SELECT / UPDATE
+
+panel --> mapas : Visualizar ubicación
+
+' ==========================================
+' OFFLINE
+' ==========================================
+
+sqlite --> api : Sincronización posterior
+
+note right of api
+  Alternativa A3:
+  procesamiento síncrono.
+
+  La solicitud permanece
+  activa hasta completar
+  el procesamiento.
+end note
+
+note bottom of negocio
+  Las fotografías forman parte
+  del flujo de procesamiento
+  de la solicitud.
+end note
+
+@enduml
