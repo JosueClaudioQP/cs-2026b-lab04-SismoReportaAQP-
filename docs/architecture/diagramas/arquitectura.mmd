@@ -1,0 +1,106 @@
+flowchart TB
+
+    %% =========================
+    %% ACTORES
+    %% =========================
+
+    Ciudadano["👤 Ciudadano"]
+    Operador["👨‍💼 Operador"]
+
+    %% =========================
+    %% CLIENTES
+    %% =========================
+
+    subgraph CLIENTES["Clientes"]
+        AppMovil["📱 Aplicación móvil"]
+        SQLite["💾 SQLite local<br/>Cola offline"]
+        PanelWeb["🖥️ Panel web de operaciones"]
+    end
+
+    %% =========================
+    %% BACKEND
+    %% =========================
+
+    subgraph BACKEND["Backend SismoReporta AQP - Monolito Modular"]
+
+        API["API REST"]
+
+        subgraph MODULOS["Módulos del sistema"]
+
+            Ingesta["Módulo de Ingesta<br/>RF-01, RF-02, RF-03, RF-04"]
+
+            Operaciones["Módulo de Operaciones<br/>RF-05, RF-06, RF-07"]
+
+        end
+
+        Cola["📨 Cola de mensajes<br/>Persistente"]
+
+        Worker["⚙️ Worker de procesamiento<br/>asíncrono"]
+
+    end
+
+    %% =========================
+    %% DATOS
+    %% =========================
+
+    subgraph DATOS["Almacenamiento"]
+
+        BD["🗄️ Base de datos<br/>Reportes y estados"]
+
+        Evidencias["🖼️ Almacenamiento<br/>de fotografías"]
+
+    end
+
+    %% =========================
+    %% SERVICIO EXTERNO
+    %% =========================
+
+    Mapas["🌐 Servicio externo<br/>de mapas"]
+
+    %% =========================
+    %% FLUJO CIUDADANO
+    %% =========================
+
+    Ciudadano --> AppMovil
+
+    AppMovil --> SQLite
+
+    AppMovil -->|"HTTPS / JSON"| API
+
+    %% =========================
+    %% INGESTA
+    %% =========================
+
+    API --> Ingesta
+
+    Ingesta -->|"Publicar reporte"| Cola
+
+    Cola --> Worker
+
+    Worker -->|"Persistir reporte"| BD
+
+    Worker -->|"Procesar evidencia"| Evidencias
+
+    %% =========================
+    %% OPERACIONES
+    %% =========================
+
+    Operador --> PanelWeb
+
+    PanelWeb -->|"HTTPS / REST"| API
+
+    API --> Operaciones
+
+    Operaciones -->|"Consultar / actualizar"| BD
+
+    %% =========================
+    %% SERVICIO EXTERNO
+    %% =========================
+
+    Operaciones -->|"Consultar ubicación"| Mapas
+
+    %% =========================
+    %% DEPENDENCIAS INTERNAS
+    %% =========================
+
+    Ingesta -.->|"Delegar procesamiento"| Worker
