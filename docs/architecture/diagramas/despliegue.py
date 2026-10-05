@@ -14,10 +14,10 @@ from diagrams import Diagram, Cluster, Edge
 from diagrams.generic.device import Mobile
 from diagrams.onprem.client import User
 from diagrams.onprem.network import Nginx, Internet
-from diagrams.programming.framework import FastAPI
+from diagrams.programming.framework import Fastapi
 from diagrams.onprem.inmemory import Redis
 from diagrams.onprem.database import PostgreSQL
-from diagrams.onprem.storage import Minio
+from diagrams.generic.storage import Storage
 from diagrams.onprem.monitoring import Prometheus, Grafana
 
 # Determinar la ruta de salida para guardar en docs/architecture/diagramas/img/despliegue
@@ -79,8 +79,8 @@ with Diagram(
 
         # Capa de Aplicación Monolítica Modular
         with Cluster("Contenedor Backend (Monolito Modular)"):
-            backend_api = FastAPI("API REST (FastAPI)\n- Mód. Ingesta (UUID/Idempotencia)\n- Mód. Operaciones & Brigadas")
-            worker_interno = FastAPI("Worker Asíncrono Interno\n[Consumidor de Cola]")
+            backend_api = Fastapi("API REST (FastAPI)\n- Mód. Ingesta (UUID/Idempotencia)\n- Mód. Operaciones & Brigadas")
+            worker_interno = Fastapi("Worker Asíncrono Interno\n[Consumidor de Cola]")
 
         # Capa de Mensajería y Caché
         with Cluster("Caché y Cola Persistente"):
@@ -89,7 +89,7 @@ with Diagram(
         # Capa de Persistencia
         with Cluster("Almacenamiento y Base de Datos"):
             bd_postgres = PostgreSQL("PostgreSQL 16 + PostGIS\n[Reportes, Zonas, Brigadas]\n(Persistencia Relacional)")
-            storage_fotos = Minio("Storage de Evidencia (MinIO)\n[Fotos de Daños / Vol. Persistente]")
+            storage_fotos = Storage("Storage de Evidencia (MinIO)\n[Fotos de Daños / Vol. Persistente]")
 
         # Capa de Monitoreo y Observabilidad
         with Cluster("Observabilidad y Monitoreo"):
