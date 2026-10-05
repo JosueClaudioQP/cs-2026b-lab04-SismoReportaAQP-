@@ -7,7 +7,7 @@ Obtener alternativas de estilos arquitectónicos para SismoReporta AQP
 a partir de los drivers arquitectónicos identificados en E1.
 
 ### Herramienta
-Gemini
+Google Gemini
 
 ### Prompt
 ROL:
@@ -118,5 +118,160 @@ Se realizará una segunda interacción con IA utilizando el
 enfoque de "abogado del diablo" para cuestionar estas
 afirmaciones.
 
+## Interacción IA-02 — Abogado del diablo
+
+### Objetivo
+
+Cuestionar las recomendaciones y detectar afirmaciones
+exageradas, supuestos no justificados y riesgos arquitectónicos.
+
+### Herramienta
+
+Google Gemini
+
+### Prompt
+
+ACTÚA COMO ABOGADO DEL DIABLO Y AUDITOR DE TU RESPUESTA ANTERIOR.
+
+Estamos realizando el laboratorio de Fundamentos de Arquitectura
+de Software para el caso SismoReporta AQP.
+
+Tu respuesta anterior propuso:
+
+A1: Monolito Modular con Ingesta Asíncrona.
+A2: Arquitectura Orientada a Eventos / Serverless.
+A3: Cliente-Servidor N-Capas Síncrono.
+
+Tu recomendación preliminar fue A1.
+
+Ahora NO debes defender automáticamente esa recomendación.
+Debes intentar encontrar errores, exageraciones, supuestos no
+justificados y riesgos en tu propia respuesta.
+
+CONTEXTO REAL DEL CASO:
+
+- El sistema permite registrar reportes de daños por sismos.
+- Puede incluir fotografías y ubicación.
+- Debe funcionar con conectividad móvil intermitente.
+- Los reportes deben poder almacenarse offline y sincronizarse.
+- Puede haber hasta 20 000 reportes durante la primera hora
+  después de un sismo.
+- La red móvil puede estar congestionada.
+- El equipo es de máximo 3 integrantes.
+- El MVP debe desarrollarse en 1 mes.
+
+DRIVERS DE CALIDAD:
+
+1. Disponibilidad
+2. Rendimiento
+3. Fiabilidad
+4. Usabilidad
+
+TAREA:
+
+Analiza críticamente las tres alternativas.
+
+Para cada una responde:
+
+1. ¿Qué afirmaciones de tu respuesta anterior fueron demasiado
+   optimistas o exageradas?
+
+2. ¿Qué afirmaciones no están demostradas por los datos del caso?
+
+3. ¿Qué supuestos introdujiste que NO aparecen en los requisitos?
+
+4. ¿Qué riesgos podrían hacer que la arquitectura falle?
+
+5. ¿Cómo afecta la arquitectura a la disponibilidad ante
+   20 000 reportes en la primera hora?
+
+6. ¿Cómo afecta la arquitectura al funcionamiento offline?
+
+7. ¿Cómo afecta la arquitectura a la fiabilidad de la sincronización?
+
+8. ¿Qué complejidad introduce para un equipo de 3 personas
+   y un MVP de 1 mes?
+
+9. ¿Existe alguna razón para NO elegir el Monolito Modular
+   con Ingesta Asíncrona?
+
+10. ¿Existe alguna razón para reconsiderar alguna de las otras
+    dos alternativas?
+
+IMPORTANTE:
+
+Distingue claramente entre:
+
+- Hechos proporcionados por el caso.
+- Inferencias razonables.
+- Supuestos introducidos por la IA.
+- Afirmaciones que requieren verificación.
+
+No inventes nuevos requisitos.
+
+Presta especial atención a estas afirmaciones de tu respuesta anterior:
+
+- "Escalabilidad elástica e infinita".
+- "Garantiza que ningún reporte se pierda".
+- "ráfagas de 50–100 req/s".
+- "costo cero en periodos sin actividad".
+- "incapaz de soportar picos extremos" de la arquitectura
+  Cliente-Servidor.
+
+Indica si cada una es:
+VERIFICADA, RAZONABLE, NO JUSTIFICADA, EXAGERADA o INCORRECTA.
+
+FORMATO DE RESPUESTA:
+
+1. Auditoría de afirmaciones
+
+| Afirmación | Clasificación | Justificación |
+|---|---|---|
+
+2. Crítica de las alternativas
+
+| Alternativa | Problema | Driver afectado | Severidad |
+|---|---|---|---|
+
+3. Recomendación revisada
+
+Indica si mantienes o cambias la recomendación de A1.
+
+Explica la decisión considerando principalmente los drivers
+de calidad y las restricciones del proyecto.
+
+4. Conclusión
+
+Indica qué alternativa debería pasar a la matriz de decisión
+y qué riesgos deben ser considerados posteriormente.
+
+### Resumen de la respuesta
+
+Gemini revisó las tres alternativas y corrigió varias afirmaciones
+realizadas en su primera respuesta.
+
+Se determinó que la afirmación sobre una "escalabilidad elástica
+e infinita" de Serverless era exagerada y que la garantía de que
+"ningún reporte se pierda" tampoco podía considerarse absoluta.
+
+También se identificó que la estimación de ráfagas de 50–100 req/s
+no corresponde a un dato explícito del caso, por lo que debe
+considerarse una inferencia y no un requisito.
+
+La complejidad de A1 también fue reconsiderada, pasando de una
+estimación inicial de baja-media a una valoración alta debido a
+la implementación de colas, workers, idempotencia y sincronización
+offline.
+
+Afirmaciones corregidas
+1. Se rechazó la afirmación de escalabilidad "infinita".
+2. Se rechazó la garantía absoluta de cero pérdida de reportes.
+3. Se corrigió la tasa de 50–100 req/s como una inferencia.
+4. Se corrigió la afirmación de costo cero de Serverless.
+5. Se corrigió la afirmación de que A3 es incapaz de soportar picos.
+6. Se corrigió la estimación de complejidad de A1.
+
 ### Decisión del equipo
-Pendiente de evaluación mediante matriz de decisión.
+Después de revisar las alternativas y aplicar una matriz de decisión
+ponderada, se seleccionó A1: Monolito Modular con Ingesta Asíncrona
+Simplificada, con una puntuación de 4.40/5.
