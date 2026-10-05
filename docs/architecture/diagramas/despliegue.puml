@@ -1,0 +1,95 @@
+@startuml
+title SismoReporta AQP - Diagrama de Despliegue Físico y de Infraestructura (E6)
+skinparam componentStyle rectangle
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam linetype ortho
+
+skinparam node {
+    BackgroundColor #F8F9FA
+    BorderColor #6C757D
+}
+
+node "Dispositivo Móvil Ciudadano" as nodo_movil <<Smartphone Android / iOS>> {
+    node "Sandbox App" {
+        component "App SismoReporta AQP\n(Flutter / React Native)" as app_movil
+        database "SQLite Local\n[Queue Offline + Sync Manager]" as sqlite_local
+    }
+    app_movil <--> sqlite_local : Almacenar / Leer pendientes
+}
+
+node "Estación de Trabajo - Operador / Defensa Civil" as nodo_pc <<PC / Laptop>> {
+    component "Navegador Web\n(Panel SPA Operador)" as navegador_web
+}
+
+cloud "Red Celular / Internet" as nube_internet {
+    note right of nube_internet
+        Conectividad intermitente
+        post-sismo con ráfagas
+        de hasta 20 000 reportes/hora
+    end note
+}
+
+cloud "Servicios Externos" as cloud_externos {
+    component "Servicio de Tiles de Mapa\n(OpenStreetMap / Mapbox)" as osm_tiles
+}
+
+node "Servidor de Producción / Clúster Host" as servidor_host <<Host Linux / Docker Host>> {
+
+    node "Capa Perimetral / DMZ" {
+        component "Nginx Reverse Proxy\n[SSL Termination / Rate Limiting]" as nginx
+    }
+
+    node "Capa de Aplicación (Monolito Modular)" {
+        component "FastAPI Monolith\n[Módulo Ingesta + Módulo Operaciones]" as backend_api
+        component "Worker Asíncrono Interno\n[Consumidor de Cola / Background Tasks]" as worker
+    }
+
+    node "Capa de Caché y Cola de Mensajes" {
+        database "Redis 7 (AOF Persistente)\n[Cola de Reportes BullMQ/Celery]" as redis_queue
+    }
+
+    node "Capa de Persistencia de Datos" {
+        database "PostgreSQL 16 + PostGIS\n[Reportes, Zonas, Brigadas]" as postgres_db
+        folder "Volumen / Storage MinIO\n[Evidencia Fotográfica / Fotos]" as minio_storage
+    }
+
+    node "Capa de Monitoreo y Salud" {
+        component "Prometheus\n[Métricas de Ingesta]" as prometheus
+        component "Grafana\n[Dashboard Operacional]" as grafana
+    }
+}
+
+' Relaciones de red de entrada
+app_movil --> nube_internet : 1. Enviar reporte (HTTPS / JSON + UUID)
+nube_internet --> nginx : HTTPS / Puerto 443
+
+navegador_web --> nube_internet : Consulta reportes / Asignar brigadas
+nube_internet --> nginx : HTTPS / Puerto 443
+
+navegador_web ..> osm_tiles : Carga directa de mapas en navegador
+
+' Relaciones internas del servidor
+nginx --> backend_api : Proxy Pass http://localhost:8000
+
+backend_api --> redis_queue : 2. Encolar reporte liviano (LPUSH / Productor)
+backend_api ..> nginx : 3. Retorna HTTP 202 Accepted (<100ms)
+
+worker --> redis_queue : 4. Extraer mensaje (BRPOP / Consumidor)
+worker --> postgres_db : 5. Persistir metadata y geolocalización
+worker --> minio_storage : 6. Guardar archivo fotográfico referenciado
+
+backend_api --> postgres_db : Consultas y actualizaciones del Operador (SQL)
+
+' Observabilidad
+backend_api ..> prometheus : Exposición de métricas (/metrics)
+redis_queue ..> prometheus : Métricas de longitud de cola
+prometheus --> grafana : Consumo de métricas y alertas
+
+note bottom of redis_queue
+  Permite absorber ráfagas de 20 000 reportes/hora
+  desacoplando el tiempo de respuesta HTTP de la escritura
+  en base de datos y disco de almacenamiento.
+end note
+
+@enduml
