@@ -1,9 +1,17 @@
-# Laboratorio 05: Arquitectura de Software – SismoReporta AQP
+# SismoReporta AQP – Arquitectura de Software (Laboratorios 04, 05 y 06)
 
 > **Universidad Nacional de San Agustín de Arequipa (UNSA)**  
 > **Facultad de Ingeniería de Producción y Servicios — Escuela Profesional de Ingeniería de Sistemas**  
 > **Curso:** Fundamentos de Arquitectura de Software (2026-B)  
 > **Repositorio:** `cs-2026b-lab04-SismoReportaAQP-`
+
+## Índice de laboratorios
+
+| Lab | Tema | Sección | Carpeta | Tag |
+|---|---|---|---|---|
+| 04 | Arquitectura: drivers, matriz, ADR, diagramas | [1 a 6](#1-información-del-proyecto-y-caso-asignado) | `docs/architecture/` | — |
+| 05 | UML como código (clases, secuencia, estados, actividades, paquetes) | [7](#7-diseño-uml-lab-05) | `docs/design/`, `src/` | `v0.5-diseno` |
+| 06 | Modelo C4 con Structurizr DSL | [8](#8-arquitectura-c4-lab-06) | `docs/architecture/c4/` | `v0.6-c4` |
 
 ---
 
@@ -170,14 +178,14 @@ flowchart TB
 
 | Entregable | Descripción | Enlace al Archivo | Artefactos Visuales |
 |---|---|---|---|
-| **E1** | Drivers arquitectónicos, atributos de calidad y escenarios en 6 partes | [`docs/architecture/drivers.md`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/drivers.md) | — |
-| **E2** | Matriz de decisión ponderada multicriterio y auditoría de IA | [`docs/architecture/matriz-decision.md`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/matriz-decision.md) | A1 (4.40), A2 (3.90), A3 (3.35) |
-| **E3** | Diagrama de arquitectura como código en Mermaid | [`docs/architecture/diagramas/arquitectura.mmd`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/arquitectura.mmd) | [`Diagrama de Arquitectura.png`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/img/Diagrama%20de%20Arquitectura.png) |
-| **E4** | Registros de Decisiones Arquitectónicas (ADRs) | [`docs/architecture/adr/`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/adr/) | [ADR-001](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/adr/001-estilo-arquitectonico.md), [ADR-002](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/adr/002-sincronizacion-offline.md), [ADR-003](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/adr/003-cola-procesamiento-asincrono.md) |
-| **E5** | Diagrama de la alternativa descartada (PlantUML) | [`docs/architecture/diagramas/alternativa.puml`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/alternativa.puml) | [`AlternativaPlantUML.png`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/img/AlternativaPlantUML.png) |
-| **E6** | Vista de despliegue físico y lógico (Python Diagrams / Colab / PlantUML) | [`despliegue.py`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue.py) · [`despliegue_colab.ipynb`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue_colab.ipynb) · [`despliegue.puml`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue.puml) | [`despliegue.png`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/img/despliegue.png) |
-| **E7** | Bitácora de interacciones con IA (5 sesiones, correcciones y prompts) | [`docs/architecture/bitacora-ia.md`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/bitacora-ia.md) | Auditoría de 6 sesgos e IA adversarial |
-| **E8** | README del repositorio y síntesis técnica grupal | [`README.md`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/README.md) | Este documento |
+| **E1** | Drivers arquitectónicos, atributos de calidad y escenarios en 6 partes | [`docs/architecture/drivers.md`](docs/architecture/drivers.md) | — |
+| **E2** | Matriz de decisión ponderada multicriterio y auditoría de IA | [`docs/architecture/matriz-decision.md`](docs/architecture/matriz-decision.md) | A1 (4.40), A2 (3.90), A3 (3.35) |
+| **E3** | Diagrama de arquitectura como código en Mermaid | [`docs/architecture/diagramas/arquitectura.mmd`](docs/architecture/diagramas/arquitectura.mmd) | [`Diagrama de Arquitectura.png`](docs/architecture/diagramas/img/Diagrama%20de%20Arquitectura.png) |
+| **E4** | Registros de Decisiones Arquitectónicas (ADRs) | [`docs/architecture/adr/`](docs/architecture/adr/) | [ADR-001](docs/architecture/adr/001-estilo-arquitectonico.md), [ADR-002](docs/architecture/adr/002-sincronizacion-offline.md), [ADR-003](docs/architecture/adr/003-cola-procesamiento-asincrono.md) |
+| **E5** | Diagrama de la alternativa descartada (PlantUML) | [`docs/architecture/diagramas/alternativa.puml`](docs/architecture/diagramas/alternativa.puml) | [`AlternativaPlantUML.png`](docs/architecture/diagramas/img/AlternativaPlantUML.png) |
+| **E6** | Vista de despliegue físico y lógico (Python Diagrams / Colab / PlantUML) | [`despliegue.py`](docs/architecture/diagramas/despliegue.py) · [`despliegue_colab.ipynb`](docs/architecture/diagramas/despliegue_colab.ipynb) · [`despliegue.puml`](docs/architecture/diagramas/despliegue.puml) | [`despliegue.png`](docs/architecture/diagramas/img/despliegue.png) |
+| **E7** | Bitácora de interacciones con IA (5 sesiones, correcciones y prompts) | [`docs/architecture/bitacora-ia.md`](docs/architecture/bitacora-ia.md) | Auditoría de 6 sesgos e IA adversarial |
+| **E8** | README del repositorio y síntesis técnica grupal | [`README.md`](README.md) | Este documento |
 
 ---
 
@@ -193,7 +201,7 @@ Durante el desarrollo de este laboratorio, la Inteligencia Artificial demostró 
 Para generar la imagen del diagrama de despliegue mediante la librería `diagrams` de Python:
 
 #### Opción 1: En Google Colab (Recomendado)
-1. Abrir el notebook [`docs/architecture/diagramas/despliegue_colab.ipynb`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue_colab.ipynb) en Google Colab.
+1. Abrir el notebook [`docs/architecture/diagramas/despliegue_colab.ipynb`](docs/architecture/diagramas/despliegue_colab.ipynb) en Google Colab.
 2. Ejecutar la celda de instalación de Graphviz y dependencias:
    ```bash
    !apt-get update -qq && !apt-get install -y -qq graphviz
@@ -213,7 +221,9 @@ python docs/architecture/diagramas/despliegue.py
 ```
 
 ### B. Vista de Despliegue Alternativa en PlantUML
-En caso de restricciones de entorno local, se encuentra disponible [`docs/architecture/diagramas/despliegue.puml`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue.puml), el cual puede visualizarse y compilarse directamente en [PlantUML Web Server](http://www.plantuml.com/plantuml) o mediante la extensión de PlantUML en VS Code / Antigravity IDE.
+En caso de restricciones de entorno local, se encuentra disponible [`docs/architecture/diagramas/despliegue.puml`](docs/architecture/diagramas/despliegue.puml), el cual puede visualizarse y compilarse directamente en [PlantUML Web Server](http://www.plantuml.com/plantuml) o mediante la extensión de PlantUML en VS Code / Antigravity IDE.
+
+---
 
 ## 7. Diseño UML (Lab 05)
 
@@ -241,3 +251,66 @@ stateDiagram-v2
 | E5 Paquetes | [`paquetes.puml`](docs/design/paquetes.puml) | [`png`](docs/design/img/paquetes.png) |
 | E6 Round-trip | [`round-trip.md`](docs/design/round-trip.md) · [`src/reportes/`](src/reportes/dominio.py) | [`classes_reportes.png`](docs/design/img/classes_reportes.png) |
 | E7 Consistencia y bitácora | [`consistencia.md`](docs/design/consistencia.md) · [`bitacora-ia.md`](docs/design/bitacora-ia.md) | — |
+
+---
+
+## 8. Arquitectura C4 (Lab 06)
+
+Un solo modelo, [`workspace.dsl`](docs/architecture/c4/workspace.dsl) (Structurizr DSL), genera todas las vistas. El inventario de elementos y su origen está en [`inventario.md`](docs/architecture/c4/inventario.md). Decisiones nuevas: [ADR-004](docs/architecture/adr/004-persistencia-y-evidencia.md) (PostgreSQL + MinIO) y [ADR-005](docs/architecture/adr/005-notificacion-sms-brigadistas.md) (aviso por SMS).
+
+**Nivel 1 – Contexto del sistema (copiado de `export/`):**
+
+```mermaid
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["System Context View: SismoReporta AQP"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Ciudadano</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Persona afectada que reporta<br />daños con ubicación y fotos,<br />incluso sin conectividad.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    16["<div style='font-weight: bold'>Servicio de mapas</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Provee los mapas (tiles) para<br />ubicar los reportes.</div>"]
+    style 16 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    17["<div style='font-weight: bold'>Servicio de mensajería SMS</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega los avisos de<br />asignación a los brigadistas.</div>"]
+    style 17 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    2["<div style='font-weight: bold'>Operador / Coordinador de Defensa Civil</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Visualiza el mapa de daños,<br />clasifica reportes, actualiza<br />estados y asigna brigadas.</div>"]
+    style 2 fill:#08427b,stroke:#052e56,color:#ffffff
+    3["<div style='font-weight: bold'>Brigadista</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Recibe los incidentes<br />priorizados y los atiende en<br />terreno.</div>"]
+    style 3 fill:#08427b,stroke:#052e56,color:#ffffff
+    4["<div style='font-weight: bold'>SismoReporta AQP</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Recibe reportes ciudadanos de<br />daños tras un sismo (hasta 20<br />000 en la primera hora) y<br />apoya la priorización de<br />zonas.</div>"]
+    style 4 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    1-. "<div>Reporta daños tras un sismo</div><div style='font-size: 70%'></div>" .->4
+    2-. "<div>Prioriza zonas y asigna<br />brigadas</div><div style='font-size: 70%'></div>" .->4
+    4-. "<div>Obtiene mapas para ubicar<br />reportes</div><div style='font-size: 70%'>[HTTPS]</div>" .->16
+    4-. "<div>Solicita avisos de asignación</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->17
+    17-. "<div>Envía el aviso de asignación</div><div style='font-size: 70%'></div>" .->3
+
+  end
+```
+
+| Entregable | Vista | Imagen | Código exportado |
+|---|---|---|---|
+| E1 | Nivel 1 – Contexto | [`png`](docs/architecture/c4/img/structurizr-Contexto.png) | [`puml`](docs/architecture/c4/export/structurizr-Contexto.puml) · [`mmd`](docs/architecture/c4/export/structurizr-Contexto.mmd) |
+| E2 | Nivel 2 – Contenedores | [`png`](docs/architecture/c4/img/structurizr-Contenedores.png) | [`puml`](docs/architecture/c4/export/structurizr-Contenedores.puml) · [`mmd`](docs/architecture/c4/export/structurizr-Contenedores.mmd) |
+| E3 | Nivel 3 – Componentes del backend | [`png`](docs/architecture/c4/img/structurizr-Componentes.png) | [`puml`](docs/architecture/c4/export/structurizr-Componentes.puml) · [`mmd`](docs/architecture/c4/export/structurizr-Componentes.mmd) |
+| E4 | Dinámica – sincronizar un reporte | [`png`](docs/architecture/c4/img/structurizr-SincronizarReporte.png) | [`puml`](docs/architecture/c4/export/structurizr-SincronizarReporte.puml) · [`mmd`](docs/architecture/c4/export/structurizr-SincronizarReporte.mmd) |
+| E5 | Despliegue – Producción | [`png`](docs/architecture/c4/img/structurizr-Despliegue.png) | [`puml`](docs/architecture/c4/export/structurizr-Despliegue.puml) · [`mmd`](docs/architecture/c4/export/structurizr-Despliegue.mmd) |
+| E6 | Contexto escrito a mano y comparación | [`png`](docs/architecture/c4/img/contexto-manual.png) | [`contexto-manual.puml`](docs/architecture/c4/contexto-manual.puml) · [`comparacion.md`](docs/architecture/c4/comparacion.md) |
+| E7 | Revisión, explicación y bitácora | — | [`revision-c4.md`](docs/architecture/c4/revision-c4.md) · [`explicacion.md`](docs/architecture/c4/explicacion.md) · [`bitacora-ia.md`](docs/architecture/c4/bitacora-ia.md) · [`cuestionario.md`](docs/architecture/c4/cuestionario.md) |
+| E8 | Revisión cruzada | — | [`revision-cruzada.md`](docs/architecture/c4/revision-cruzada.md) |
+
+El nivel 4 (código) no se dibuja de nuevo: es el diagrama de clases del Lab 05, [`docs/design/clases.puml`](docs/design/clases.puml). Los componentes del nivel 3 coinciden con los paquetes de [`docs/design/paquetes.puml`](docs/design/paquetes.puml).
+
+**Reproducción** (Java 17+ y [Structurizr CLI](https://github.com/structurizr/cli/releases)):
+
+```bash
+cd docs/architecture/c4
+./structurizr.sh validate -w workspace.dsl
+./structurizr.sh export -w workspace.dsl -f plantuml/c4plantuml -o export
+./structurizr.sh export -w workspace.dsl -f mermaid -o export
+java -jar plantuml.jar -tpng -o ../img export/*.puml
+# Interactivo: docker run -it --rm -p 8080:8080 -v "$PWD":/usr/local/structurizr structurizr/lite
+```
+
+Una GitHub Action ([`c4.yml`](.github/workflows/c4.yml)) valida el modelo en cada push y regenera las imágenes.
