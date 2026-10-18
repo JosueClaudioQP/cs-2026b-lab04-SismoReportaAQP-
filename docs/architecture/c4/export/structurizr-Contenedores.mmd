@@ -1,0 +1,46 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Container View: SismoReporta AQP"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Ciudadano</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Persona afectada que reporta<br />daños con ubicación y fotos,<br />incluso sin conectividad.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    2["<div style='font-weight: bold'>Operador / Coordinador de Defensa Civil</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Visualiza el mapa de daños,<br />clasifica reportes, actualiza<br />estados y asigna brigadas.</div>"]
+    style 2 fill:#08427b,stroke:#052e56,color:#ffffff
+    16["<div style='font-weight: bold'>Servicio de mapas</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Provee los mapas (tiles) para<br />ubicar los reportes.</div>"]
+    style 16 fill:#999999,stroke:#6b6b6b,color:#ffffff
+    17["<div style='font-weight: bold'>Servicio de mensajería SMS</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega los avisos de<br />asignación a los brigadistas.</div>"]
+    style 17 fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    subgraph 4 ["SismoReporta AQP"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      13["<div style='font-weight: bold'>Cola persistente</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis 7]</div><div style='font-size: 80%; margin-top:10px'>Mensajes de reportes<br />(metadata y referencias, sin<br />fotos binarias); persistencia<br />AOF.</div>"]
+      style 13 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      14[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL 16 + PostGIS]</div><div style='font-size: 80%; margin-top:10px'>Reportes, estados, UUID,<br />brigadas y geolocalización.</div>")]
+      style 14 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      15["<div style='font-weight: bold'>Almacenamiento de evidencia</div><div style='font-size: 70%; margin-top: 0px'>[Container: MinIO (API S3)]</div><div style='font-size: 80%; margin-top:10px'>Fotografías de daños,<br />referenciadas por URI desde<br />el reporte.</div>"]
+      style 15 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Aplicación móvil</div><div style='font-size: 70%; margin-top: 0px'>[Container: Flutter / React Native]</div><div style='font-size: 80%; margin-top:10px'>Registra reportes con<br />ubicación y fotografías;<br />funciona sin conexión y<br />sincroniza con reintentos<br />(backoff exponencial +<br />jitter).</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      6[("<div style='font-weight: bold'>Almacenamiento local</div><div style='font-size: 70%; margin-top: 0px'>[Container: SQLite]</div><div style='font-size: 80%; margin-top:10px'>Reportes pendientes de<br />sincronización, con UUID y<br />estado.</div>")]
+      style 6 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      7["<div style='font-weight: bold'>Panel web de operaciones</div><div style='font-size: 70%; margin-top: 0px'>[Container: SPA web]</div><div style='font-size: 80%; margin-top:10px'>Mapa de daños, filtros,<br />clasificación, estados y<br />asignación de brigadas.</div>"]
+      style 7 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      8["<div style='font-weight: bold'>Backend SismoReporta</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / FastAPI]</div><div style='font-size: 80%; margin-top:10px'>Monolito modular con API REST<br />(ADR-001); el worker interno<br />corre dentro del mismo<br />artefacto (ADR-003).</div>"]
+      style 8 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    1-. "<div>Registra reportes de daños y<br />fotos</div><div style='font-size: 70%'></div>" .->5
+    2-. "<div>Revisa el mapa y asigna<br />brigadas</div><div style='font-size: 70%'></div>" .->7
+    5-. "<div>Guarda y lee reportes<br />pendientes</div><div style='font-size: 70%'>[SQLite]</div>" .->6
+    5-. "<div>Envía reportes con UUID</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->8
+    7-. "<div>Consulta reportes y los<br />gestiona</div><div style='font-size: 70%'>[HTTPS/REST]</div>" .->8
+    7-. "<div>Descarga mapas para ubicar<br />reportes</div><div style='font-size: 70%'>[HTTPS]</div>" .->16
+    8-. "<div>Publica y consume reportes</div><div style='font-size: 70%'>[Redis protocol]</div>" .->13
+    8-. "<div>Persiste y consulta reportes</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->14
+    8-. "<div>Guarda evidencia fotográfica</div><div style='font-size: 70%'>[API S3 / HTTPS]</div>" .->15
+    8-. "<div>Solicita avisos de asignación</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->17
+
+  end

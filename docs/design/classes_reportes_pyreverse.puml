@@ -1,5 +1,8 @@
 @startuml classes_reportes
 set namespaceSeparator none
+class "ApiController" as reportes.servicios.ApiController {
+  recibir_reporte(r: Reporte) -> int
+}
 class "Brigada" as reportes.dominio.Brigada {
   disponible : bool
   id : UUID
@@ -46,6 +49,24 @@ class "RepositorioReportes" as reportes.dominio.RepositorioReportes {
   {abstract}buscar(uuid: UUID) -> Reporte
   {abstract}existe(uuid: UUID) -> bool
   {abstract}guardar(r: Reporte) -> None
+}
+class "ServicioIngesta" as reportes.servicios.ServicioIngesta {
+  recibir(r: Reporte) -> bool
+  validar_uuid(uuid: UUID) -> bool
+}
+class "ServicioOperaciones" as reportes.servicios.ServicioOperaciones {
+  {abstract}asignar_brigada(reporte_id: UUID, brigada_id: UUID) -> None
+  verificar(reporte_id: UUID, nivel: NivelDanio) -> None
+}
+class "SyncManager" as reportes.servicios.SyncManager {
+  intentos : int
+  calcular_backoff(intento: int) -> int
+  marcar_sincronizado(uuid: UUID) -> None
+  registrar(r: Reporte) -> None
+  {abstract}sincronizar_pendientes() -> None
+}
+class "WorkerProcesamiento" as reportes.servicios.WorkerProcesamiento {
+  procesar() -> None
 }
 reportes.dominio.ColaPersistenteAdapter --|> reportes.dominio.ColaReportes
 reportes.dominio.Reporte --> reportes.dominio.EstadoReporte : estado

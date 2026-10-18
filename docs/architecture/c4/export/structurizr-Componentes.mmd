@@ -1,0 +1,50 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Component View: SismoReporta AQP - Backend SismoReporta"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    17["<div style='font-weight: bold'>Servicio de mensajería SMS</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Entrega los avisos de<br />asignación a los brigadistas.</div>"]
+    style 17 fill:#999999,stroke:#6b6b6b,color:#ffffff
+
+    subgraph 4 ["SismoReporta AQP"]
+      style 4 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      subgraph 8 ["Backend SismoReporta"]
+        style 8 fill:#ffffff,stroke:#2e6295,color:#2e6295
+
+        10["<div style='font-weight: bold'>Módulo Operaciones</div><div style='font-size: 70%; margin-top: 0px'>[Component: Módulo Python]</div><div style='font-size: 80%; margin-top:10px'>Consulta, clasifica y cambia<br />el estado de reportes; asigna<br />brigadas (RF-05 a RF-07).</div>"]
+        style 10 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        11["<div style='font-weight: bold'>Módulo Procesamiento</div><div style='font-size: 70%; margin-top: 0px'>[Component: Módulo Python]</div><div style='font-size: 80%; margin-top:10px'>Worker interno asíncrono:<br />consume la cola y persiste el<br />reporte de forma idempotente.</div>"]
+        style 11 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        12["<div style='font-weight: bold'>Módulo Compartido</div><div style='font-size: 70%; margin-top: 0px'>[Component: Módulo Python]</div><div style='font-size: 80%; margin-top:10px'>Entidad Reporte y puertos<br />ColaReportes y<br />RepositorioReportes.</div>"]
+        style 12 fill:#85bbf0,stroke:#5d82a8,color:#000000
+        9["<div style='font-weight: bold'>Módulo Ingesta</div><div style='font-size: 70%; margin-top: 0px'>[Component: Módulo Python]</div><div style='font-size: 80%; margin-top:10px'>Valida el UUID, guarda la<br />evidencia, publica en la cola<br />y responde HTTP 202 (RF-01 a<br />RF-03).</div>"]
+        style 9 fill:#85bbf0,stroke:#5d82a8,color:#000000
+      end
+
+      13["<div style='font-weight: bold'>Cola persistente</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis 7]</div><div style='font-size: 80%; margin-top:10px'>Mensajes de reportes<br />(metadata y referencias, sin<br />fotos binarias); persistencia<br />AOF.</div>"]
+      style 13 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      14[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL 16 + PostGIS]</div><div style='font-size: 80%; margin-top:10px'>Reportes, estados, UUID,<br />brigadas y geolocalización.</div>")]
+      style 14 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      15["<div style='font-weight: bold'>Almacenamiento de evidencia</div><div style='font-size: 70%; margin-top: 0px'>[Container: MinIO (API S3)]</div><div style='font-size: 80%; margin-top:10px'>Fotografías de daños,<br />referenciadas por URI desde<br />el reporte.</div>"]
+      style 15 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      5["<div style='font-weight: bold'>Aplicación móvil</div><div style='font-size: 70%; margin-top: 0px'>[Container: Flutter / React Native]</div><div style='font-size: 80%; margin-top:10px'>Registra reportes con<br />ubicación y fotografías;<br />funciona sin conexión y<br />sincroniza con reintentos<br />(backoff exponencial +<br />jitter).</div>"]
+      style 5 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      7["<div style='font-weight: bold'>Panel web de operaciones</div><div style='font-size: 70%; margin-top: 0px'>[Container: SPA web]</div><div style='font-size: 80%; margin-top:10px'>Mapa de daños, filtros,<br />clasificación, estados y<br />asignación de brigadas.</div>"]
+      style 7 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    5-. "<div>Envía reportes con UUID</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->9
+    7-. "<div>Consulta, clasifica y asigna</div><div style='font-size: 70%'>[HTTPS/REST]</div>" .->10
+    9-. "<div>Guarda evidencia fotográfica</div><div style='font-size: 70%'>[API S3 / HTTPS]</div>" .->15
+    9-. "<div>Publica el reporte (metadata<br />y referencias)</div><div style='font-size: 70%'>[Redis protocol]</div>" .->13
+    11-. "<div>Consume reportes</div><div style='font-size: 70%'>[Redis protocol]</div>" .->13
+    11-. "<div>Persiste el reporte<br />(idempotente por UUID)</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->14
+    10-. "<div>Consulta y actualiza estados<br />y asignaciones</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->14
+    10-. "<div>Solicita aviso de asignación</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->17
+    9-. "<div>Usa Reporte y ColaReportes</div><div style='font-size: 70%'></div>" .->12
+    11-. "<div>Usa ColaReportes y<br />RepositorioReportes</div><div style='font-size: 70%'></div>" .->12
+    10-. "<div>Usa Reporte y<br />RepositorioReportes</div><div style='font-size: 70%'></div>" .->12
+
+  end

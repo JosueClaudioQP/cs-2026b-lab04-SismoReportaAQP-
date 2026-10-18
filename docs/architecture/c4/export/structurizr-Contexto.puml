@@ -1,0 +1,32 @@
+@startuml
+title <size:24>System Context View: SismoReporta AQP</size>\n<size:24>Nivel 1: SismoReporta AQP, sus usuarios y sistemas externos.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+
+Person(Ciudadano, "Ciudadano", $descr="Persona afectada que reporta daños con ubicación y fotos, incluso sin conectividad.", $tags="", $link="")
+System(Serviciodemapas, "Servicio de mapas", $descr="Provee los mapas (tiles) para ubicar los reportes.", $tags="", $link="")
+System(ServiciodemensajeríaSMS, "Servicio de mensajería SMS", $descr="Entrega los avisos de asignación a los brigadistas.", $tags="", $link="")
+Person(OperadorCoordinadordeDefensaCivil, "Operador / Coordinador de Defensa Civil", $descr="Visualiza el mapa de daños, clasifica reportes, actualiza estados y asigna brigadas.", $tags="", $link="")
+Person(Brigadista, "Brigadista", $descr="Recibe los incidentes priorizados y los atiende en terreno.", $tags="", $link="")
+System(SismoReportaAQP, "SismoReporta AQP", $descr="Recibe reportes ciudadanos de daños tras un sismo (hasta 20 000 en la primera hora) y apoya la priorización de zonas.", $tags="", $link="")
+
+Rel(Ciudadano, SismoReportaAQP, "Reporta daños tras un sismo", $techn="", $tags="", $link="")
+Rel(OperadorCoordinadordeDefensaCivil, SismoReportaAQP, "Prioriza zonas y asigna brigadas", $techn="", $tags="", $link="")
+Rel(SismoReportaAQP, Serviciodemapas, "Obtiene mapas para ubicar reportes", $techn="HTTPS", $tags="", $link="")
+Rel(SismoReportaAQP, ServiciodemensajeríaSMS, "Solicita avisos de asignación", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(ServiciodemensajeríaSMS, Brigadista, "Envía el aviso de asignación", $techn="", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

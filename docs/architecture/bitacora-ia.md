@@ -53,7 +53,7 @@ Gemini auditó su propia propuesta previa y admitió seis desviaciones técnicas
 6. **Complejidad de A1:** Reevaluó la complejidad de A1 de "baja-media" a "media-alta" debido a la gestión de colas, idempotencia y workers.
 
 #### Evidencia de verificación
-El equipo verificó estas correcciones contrastando los requisitos del caso y la literatura de arquitectura distribuida (patrones de colas e idempotencia con UUID), lo que fundamentó la puntuación objetiva en [`matriz-decision.md`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/matriz-decision.md).
+El equipo verificó estas correcciones contrastando los requisitos del caso y la literatura de arquitectura distribuida (patrones de colas e idempotencia con UUID), lo que fundamentó la puntuación objetiva en [`matriz-decision.md`](matriz-decision.md).
 
 ---
 
@@ -114,7 +114,7 @@ El equipo **corrigió** la propuesta por presentar una sobreingeniería despropo
    * Apache Kafka requiere clúster de coordinación (ZooKeeper/KRaft), mínimo 3 brokers y >4 GB de RAM por nodo, introduciendo una complejidad operacional inmanejable para 3 desarrolladores en 1 mes (R-01, R-02).
    * Un único nodo de **Redis 7** en memoria con persistencia AOF maneja holgadamente más de **50 000 operaciones por segundo** con latencias sub-milisegundo (< 2 ms).
 3. **Proxy perimetral:** Nginx como reverse proxy absorbe fácilmente ráfagas de 55 req/s consumiendo menos de 100 MB de RAM.
-4. **Infraestructura final adoptada:** Servidor de despliegue único con Docker Compose conteniendo: Nginx (Proxy) + FastAPI Monolito Modular + Redis 7 (Cola) + Worker Interno + PostgreSQL 16 + MinIO + Prometheus/Grafana. Se documentó formalmente en [`despliegue.py`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue.py) y [`despliegue.puml`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue.puml).
+4. **Infraestructura final adoptada:** Servidor de despliegue único con Docker Compose conteniendo: Nginx (Proxy) + FastAPI Monolito Modular + Redis 7 (Cola) + Worker Interno + PostgreSQL 16 + MinIO + Prometheus/Grafana. Se documentó formalmente en [`despliegue.py`](diagramas/despliegue.py) y [`despliegue.puml`](diagramas/despliegue.puml).
 
 ---
 

@@ -1,0 +1,56 @@
+@startuml
+title <size:24>Deployment View: SismoReporta AQP - Producción</size>\n<size:24>Despliegue en producción (MVP): un servidor con Docker Compose. Las flechas directas son lógicas; físicamente el tráfico HTTPS pasa por Nginx.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Deployment>
+
+Deployment_Node(Producción.Smartphonedelciudadano, "Smartphone del ciudadano", $type="Android / iOS", $descr="", $tags="", $link="") {
+  Container(Producción.Smartphonedelciudadano.Aplicaciónmóvil_1, "Aplicación móvil", $techn="Flutter / React Native", $descr="Registra reportes con ubicación y fotografías; funciona sin conexión y sincroniza con reintentos (backoff exponencial + jitter).", $tags="", $link="")
+  ContainerDb(Producción.Smartphonedelciudadano.Almacenamientolocal_1, "Almacenamiento local", $techn="SQLite", $descr="Reportes pendientes de sincronización, con UUID y estado.", $tags="", $link="")
+}
+
+Deployment_Node(Producción.Estacióndeloperador, "Estación del operador", $type="PC con navegador web", $descr="", $tags="", $link="") {
+  Container(Producción.Estacióndeloperador.Panelwebdeoperaciones_1, "Panel web de operaciones", $techn="SPA web", $descr="Mapa de daños, filtros, clasificación, estados y asignación de brigadas.", $tags="", $link="")
+}
+
+Deployment_Node(Producción.Servidordeproducción, "Servidor de producción", $type="Linux, 4 vCPU, 8 GB RAM, disco SSD", $descr="Un solo host para el MVP (ver ADR-004).", $tags="", $link="") {
+  Deployment_Node(Producción.Servidordeproducción.DockerCompose, "Docker Compose", $type="Docker", $descr="", $tags="", $link="") {
+    Deployment_Node(Producción.Servidordeproducción.DockerCompose.Nginx, "Nginx", $type="Nginx", $descr="Reverse proxy: TLS y rate limiting.", $tags="", $link="")
+    Container(Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, "Backend SismoReporta", $techn="Python / FastAPI", $descr="Monolito modular con API REST (ADR-001); el worker interno corre dentro del mismo artefacto (ADR-003).", $tags="", $link="")
+    ContainerQueue(Producción.Servidordeproducción.DockerCompose.Colapersistente_1, "Cola persistente", $techn="Redis 7", $descr="Mensajes de reportes (metadata y referencias, sin fotos binarias); persistencia AOF.", $tags="", $link="")
+    ContainerDb(Producción.Servidordeproducción.DockerCompose.Basededatos_1, "Base de datos", $techn="PostgreSQL 16 + PostGIS", $descr="Reportes, estados, UUID, brigadas y geolocalización.", $tags="", $link="")
+    Container(Producción.Servidordeproducción.DockerCompose.Almacenamientodeevidencia_1, "Almacenamiento de evidencia", $techn="MinIO (API S3)", $descr="Fotografías de daños, referenciadas por URI desde el reporte.", $tags="", $link="")
+    Deployment_Node(Producción.Servidordeproducción.DockerCompose.Prometheus, "Prometheus", $type="Prometheus", $descr="Métricas de ingesta y longitud de la cola.", $tags="", $link="")
+    Deployment_Node(Producción.Servidordeproducción.DockerCompose.Grafana, "Grafana", $type="Grafana", $descr="Tablero operacional y alertas.", $tags="", $link="")
+  }
+
+}
+
+Rel(Producción.Smartphonedelciudadano.Aplicaciónmóvil_1, Producción.Smartphonedelciudadano.Almacenamientolocal_1, "Guarda y lee reportes pendientes", $techn="SQLite", $tags="", $link="")
+Rel(Producción.Smartphonedelciudadano.Aplicaciónmóvil_1, Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, "Envía reportes con UUID", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(Producción.Estacióndeloperador.Panelwebdeoperaciones_1, Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, "Consulta reportes y los gestiona", $techn="HTTPS/REST", $tags="", $link="")
+Rel(Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, Producción.Servidordeproducción.DockerCompose.Colapersistente_1, "Publica y consume reportes", $techn="Redis protocol", $tags="", $link="")
+Rel(Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, Producción.Servidordeproducción.DockerCompose.Basededatos_1, "Persiste y consulta reportes", $techn="SQL/TCP", $tags="", $link="")
+Rel(Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, Producción.Servidordeproducción.DockerCompose.Almacenamientodeevidencia_1, "Guarda evidencia fotográfica", $techn="API S3 / HTTPS", $tags="", $link="")
+Rel(Producción.Smartphonedelciudadano.Aplicaciónmóvil_1, Producción.Servidordeproducción.DockerCompose.Nginx, "Envía reportes", $techn="HTTPS/443", $tags="", $link="")
+Rel(Producción.Estacióndeloperador.Panelwebdeoperaciones_1, Producción.Servidordeproducción.DockerCompose.Nginx, "Consulta y gestiona reportes", $techn="HTTPS/443", $tags="", $link="")
+Rel(Producción.Servidordeproducción.DockerCompose.Nginx, Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, "Reenvía las solicitudes", $techn="HTTP", $tags="", $link="")
+Rel(Producción.Servidordeproducción.DockerCompose.Prometheus, Producción.Servidordeproducción.DockerCompose.BackendSismoReporta_1, "Lee métricas", $techn="HTTP /metrics", $tags="", $link="")
+Rel(Producción.Servidordeproducción.DockerCompose.Prometheus, Producción.Servidordeproducción.DockerCompose.Colapersistente_1, "Lee la longitud de la cola", $techn="Redis protocol", $tags="", $link="")
+Rel(Producción.Servidordeproducción.DockerCompose.Grafana, Producción.Servidordeproducción.DockerCompose.Prometheus, "Consulta métricas", $techn="HTTP", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

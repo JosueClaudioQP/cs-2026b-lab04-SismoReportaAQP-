@@ -1,0 +1,50 @@
+@startuml
+title <size:24>Component View: SismoReporta AQP - Backend SismoReporta</size>\n<size:24>Nivel 3: módulos del backend (paquetes del Lab 05).</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+System(ServiciodemensajeríaSMS, "Servicio de mensajería SMS", $descr="Entrega los avisos de asignación a los brigadistas.", $tags="", $link="")
+
+System_Boundary("SismoReportaAQP_boundary", "SismoReporta AQP", $tags="") {
+  Container_Boundary("SismoReportaAQP.BackendSismoReporta_boundary", "Backend SismoReporta", $tags="") {
+    Component(SismoReportaAQP.BackendSismoReporta.MóduloOperaciones, "Módulo Operaciones", $techn="Módulo Python", $descr="Consulta, clasifica y cambia el estado de reportes; asigna brigadas (RF-05 a RF-07).", $tags="", $link="")
+    Component(SismoReportaAQP.BackendSismoReporta.MóduloProcesamiento, "Módulo Procesamiento", $techn="Módulo Python", $descr="Worker interno asíncrono: consume la cola y persiste el reporte de forma idempotente.", $tags="", $link="")
+    Component(SismoReportaAQP.BackendSismoReporta.MóduloCompartido, "Módulo Compartido", $techn="Módulo Python", $descr="Entidad Reporte y puertos ColaReportes y RepositorioReportes.", $tags="", $link="")
+    Component(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, "Módulo Ingesta", $techn="Módulo Python", $descr="Valida el UUID, guarda la evidencia, publica en la cola y responde HTTP 202 (RF-01 a RF-03).", $tags="", $link="")
+  }
+
+  ContainerQueue(SismoReportaAQP.Colapersistente, "Cola persistente", $techn="Redis 7", $descr="Mensajes de reportes (metadata y referencias, sin fotos binarias); persistencia AOF.", $tags="", $link="")
+  ContainerDb(SismoReportaAQP.Basededatos, "Base de datos", $techn="PostgreSQL 16 + PostGIS", $descr="Reportes, estados, UUID, brigadas y geolocalización.", $tags="", $link="")
+  Container(SismoReportaAQP.Almacenamientodeevidencia, "Almacenamiento de evidencia", $techn="MinIO (API S3)", $descr="Fotografías de daños, referenciadas por URI desde el reporte.", $tags="", $link="")
+  Container(SismoReportaAQP.Aplicaciónmóvil, "Aplicación móvil", $techn="Flutter / React Native", $descr="Registra reportes con ubicación y fotografías; funciona sin conexión y sincroniza con reintentos (backoff exponencial + jitter).", $tags="", $link="")
+  Container(SismoReportaAQP.Panelwebdeoperaciones, "Panel web de operaciones", $techn="SPA web", $descr="Mapa de daños, filtros, clasificación, estados y asignación de brigadas.", $tags="", $link="")
+}
+
+Rel(SismoReportaAQP.Aplicaciónmóvil, SismoReportaAQP.BackendSismoReporta.MóduloIngesta, "Envía reportes con UUID", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(SismoReportaAQP.Panelwebdeoperaciones, SismoReportaAQP.BackendSismoReporta.MóduloOperaciones, "Consulta, clasifica y asigna", $techn="HTTPS/REST", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, SismoReportaAQP.Almacenamientodeevidencia, "Guarda evidencia fotográfica", $techn="API S3 / HTTPS", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, SismoReportaAQP.Colapersistente, "Publica el reporte (metadata y referencias)", $techn="Redis protocol", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloProcesamiento, SismoReportaAQP.Colapersistente, "Consume reportes", $techn="Redis protocol", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloProcesamiento, SismoReportaAQP.Basededatos, "Persiste el reporte (idempotente por UUID)", $techn="SQL/TCP", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloOperaciones, SismoReportaAQP.Basededatos, "Consulta y actualiza estados y asignaciones", $techn="SQL/TCP", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloOperaciones, ServiciodemensajeríaSMS, "Solicita aviso de asignación", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, SismoReportaAQP.BackendSismoReporta.MóduloCompartido, "Usa Reporte y ColaReportes", $techn="", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloProcesamiento, SismoReportaAQP.BackendSismoReporta.MóduloCompartido, "Usa ColaReportes y RepositorioReportes", $techn="", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloOperaciones, SismoReportaAQP.BackendSismoReporta.MóduloCompartido, "Usa Reporte y RepositorioReportes", $techn="", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

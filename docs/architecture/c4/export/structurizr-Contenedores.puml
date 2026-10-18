@@ -1,0 +1,46 @@
+@startuml
+title <size:24>Container View: SismoReporta AQP</size>\n<size:24>Nivel 2: contenedores de SismoReporta AQP.</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+
+Person(Ciudadano, "Ciudadano", $descr="Persona afectada que reporta daños con ubicación y fotos, incluso sin conectividad.", $tags="", $link="")
+Person(OperadorCoordinadordeDefensaCivil, "Operador / Coordinador de Defensa Civil", $descr="Visualiza el mapa de daños, clasifica reportes, actualiza estados y asigna brigadas.", $tags="", $link="")
+System(Serviciodemapas, "Servicio de mapas", $descr="Provee los mapas (tiles) para ubicar los reportes.", $tags="", $link="")
+System(ServiciodemensajeríaSMS, "Servicio de mensajería SMS", $descr="Entrega los avisos de asignación a los brigadistas.", $tags="", $link="")
+
+System_Boundary("SismoReportaAQP_boundary", "SismoReporta AQP", $tags="") {
+  ContainerQueue(SismoReportaAQP.Colapersistente, "Cola persistente", $techn="Redis 7", $descr="Mensajes de reportes (metadata y referencias, sin fotos binarias); persistencia AOF.", $tags="", $link="")
+  ContainerDb(SismoReportaAQP.Basededatos, "Base de datos", $techn="PostgreSQL 16 + PostGIS", $descr="Reportes, estados, UUID, brigadas y geolocalización.", $tags="", $link="")
+  Container(SismoReportaAQP.Almacenamientodeevidencia, "Almacenamiento de evidencia", $techn="MinIO (API S3)", $descr="Fotografías de daños, referenciadas por URI desde el reporte.", $tags="", $link="")
+  Container(SismoReportaAQP.Aplicaciónmóvil, "Aplicación móvil", $techn="Flutter / React Native", $descr="Registra reportes con ubicación y fotografías; funciona sin conexión y sincroniza con reintentos (backoff exponencial + jitter).", $tags="", $link="")
+  ContainerDb(SismoReportaAQP.Almacenamientolocal, "Almacenamiento local", $techn="SQLite", $descr="Reportes pendientes de sincronización, con UUID y estado.", $tags="", $link="")
+  Container(SismoReportaAQP.Panelwebdeoperaciones, "Panel web de operaciones", $techn="SPA web", $descr="Mapa de daños, filtros, clasificación, estados y asignación de brigadas.", $tags="", $link="")
+  Container(SismoReportaAQP.BackendSismoReporta, "Backend SismoReporta", $techn="Python / FastAPI", $descr="Monolito modular con API REST (ADR-001); el worker interno corre dentro del mismo artefacto (ADR-003).", $tags="", $link="")
+}
+
+Rel(Ciudadano, SismoReportaAQP.Aplicaciónmóvil, "Registra reportes de daños y fotos", $techn="", $tags="", $link="")
+Rel(OperadorCoordinadordeDefensaCivil, SismoReportaAQP.Panelwebdeoperaciones, "Revisa el mapa y asigna brigadas", $techn="", $tags="", $link="")
+Rel(SismoReportaAQP.Aplicaciónmóvil, SismoReportaAQP.Almacenamientolocal, "Guarda y lee reportes pendientes", $techn="SQLite", $tags="", $link="")
+Rel(SismoReportaAQP.Aplicaciónmóvil, SismoReportaAQP.BackendSismoReporta, "Envía reportes con UUID", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(SismoReportaAQP.Panelwebdeoperaciones, SismoReportaAQP.BackendSismoReporta, "Consulta reportes y los gestiona", $techn="HTTPS/REST", $tags="", $link="")
+Rel(SismoReportaAQP.Panelwebdeoperaciones, Serviciodemapas, "Descarga mapas para ubicar reportes", $techn="HTTPS", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta, SismoReportaAQP.Colapersistente, "Publica y consume reportes", $techn="Redis protocol", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta, SismoReportaAQP.Basededatos, "Persiste y consulta reportes", $techn="SQL/TCP", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta, SismoReportaAQP.Almacenamientodeevidencia, "Guarda evidencia fotográfica", $techn="API S3 / HTTPS", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta, ServiciodemensajeríaSMS, "Solicita avisos de asignación", $techn="HTTPS/JSON", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

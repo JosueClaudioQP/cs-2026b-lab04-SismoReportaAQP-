@@ -1,0 +1,20 @@
+@startuml contexto-manual
+!include <C4/C4_Context>
+skinparam dpi 180
+LAYOUT_LEFT_RIGHT()
+title Contexto de SismoReporta AQP (C4-PlantUML escrito a mano)
+
+Person(ciudadano, "Ciudadano", "Reporta daños con ubicación y fotos, incluso sin conectividad")
+Person(coordinador, "Operador / Coordinador de Defensa Civil", "Visualiza el mapa, clasifica reportes y asigna brigadas")
+Person(brigadista, "Brigadista", "Atiende en terreno los incidentes asignados")
+System(sismo, "SismoReporta AQP", "Recibe reportes ciudadanos de daños tras un sismo y apoya la priorización de zonas")
+System_Ext(mapas, "Servicio de mapas", "Provee los mapas (tiles) para ubicar reportes")
+System_Ext(sms, "Servicio de mensajería SMS", "Entrega los avisos de asignación a los brigadistas")
+
+Rel(ciudadano, sismo, "Reporta daños tras un sismo")
+Rel(coordinador, sismo, "Prioriza zonas y asigna brigadas")
+Rel(sismo, mapas, "Obtiene mapas para ubicar reportes", "HTTPS")
+Rel(sismo, sms, "Solicita avisos de asignación", "HTTPS/JSON")
+Rel(sms, brigadista, "Envía el aviso de asignación")
+SHOW_LEGEND()
+@enduml

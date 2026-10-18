@@ -1,0 +1,48 @@
+@startuml
+title <size:24>Dynamic View: SismoReporta AQP - Backend SismoReporta</size>\n<size:24>Dinámico: enviar un reporte sin señal y sincronizarlo (secuencia del Lab 05).</size>
+
+set separator none
+left to right direction
+
+<style>
+  root {
+    BackgroundColor: #ffffff
+    FontColor: #444444
+  }
+</style>
+
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Component>
+
+System_Boundary("SismoReportaAQP_boundary", "SismoReporta AQP", $tags="") {
+  Container_Boundary("SismoReportaAQP.BackendSismoReporta_boundary", "Backend SismoReporta", $tags="") {
+    Component(SismoReportaAQP.BackendSismoReporta.MóduloProcesamiento, "Módulo Procesamiento", $techn="Módulo Python", $descr="Worker interno asíncrono: consume la cola y persiste el reporte de forma idempotente.", $tags="", $link="")
+    Component(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, "Módulo Ingesta", $techn="Módulo Python", $descr="Valida el UUID, guarda la evidencia, publica en la cola y responde HTTP 202 (RF-01 a RF-03).", $tags="", $link="")
+  }
+
+  ContainerQueue(SismoReportaAQP.Colapersistente, "Cola persistente", $techn="Redis 7", $descr="Mensajes de reportes (metadata y referencias, sin fotos binarias); persistencia AOF.", $tags="", $link="")
+  ContainerDb(SismoReportaAQP.Basededatos, "Base de datos", $techn="PostgreSQL 16 + PostGIS", $descr="Reportes, estados, UUID, brigadas y geolocalización.", $tags="", $link="")
+  Container(SismoReportaAQP.Almacenamientodeevidencia, "Almacenamiento de evidencia", $techn="MinIO (API S3)", $descr="Fotografías de daños, referenciadas por URI desde el reporte.", $tags="", $link="")
+  Container(SismoReportaAQP.Aplicaciónmóvil, "Aplicación móvil", $techn="Flutter / React Native", $descr="Registra reportes con ubicación y fotografías; funciona sin conexión y sincroniza con reintentos (backoff exponencial + jitter).", $tags="", $link="")
+  ContainerDb(SismoReportaAQP.Almacenamientolocal, "Almacenamiento local", $techn="SQLite", $descr="Reportes pendientes de sincronización, con UUID y estado.", $tags="", $link="")
+}
+
+Container(SismoReportaAQP.Aplicaciónmóvil, "Aplicación móvil", $techn="Flutter / React Native", $descr="Registra reportes con ubicación y fotografías; funciona sin conexión y sincroniza con reintentos (backoff exponencial + jitter).", $tags="", $link="")
+ContainerDb(SismoReportaAQP.Almacenamientolocal, "Almacenamiento local", $techn="SQLite", $descr="Reportes pendientes de sincronización, con UUID y estado.", $tags="", $link="")
+ContainerQueue(SismoReportaAQP.Colapersistente, "Cola persistente", $techn="Redis 7", $descr="Mensajes de reportes (metadata y referencias, sin fotos binarias); persistencia AOF.", $tags="", $link="")
+ContainerDb(SismoReportaAQP.Basededatos, "Base de datos", $techn="PostgreSQL 16 + PostGIS", $descr="Reportes, estados, UUID, brigadas y geolocalización.", $tags="", $link="")
+Container(SismoReportaAQP.Almacenamientodeevidencia, "Almacenamiento de evidencia", $techn="MinIO (API S3)", $descr="Fotografías de daños, referenciadas por URI desde el reporte.", $tags="", $link="")
+
+Rel(SismoReportaAQP.Aplicaciónmóvil, SismoReportaAQP.Almacenamientolocal, "1: Guarda el reporte pendiente (ENCOLADO)", $techn="SQLite", $tags="", $link="")
+Rel(SismoReportaAQP.Aplicaciónmóvil, SismoReportaAQP.BackendSismoReporta.MóduloIngesta, "2: Envía el reporte con UUID al recuperar señal", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, SismoReportaAQP.Almacenamientodeevidencia, "3: Guarda las fotografías y obtiene su referencia", $techn="API S3 / HTTPS", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, SismoReportaAQP.Colapersistente, "4: Publica el mensaje persistente", $techn="Redis protocol", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloIngesta, SismoReportaAQP.Aplicaciónmóvil, "5: Responde HTTP 202 Accepted", $techn="HTTPS/JSON", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloProcesamiento, SismoReportaAQP.Colapersistente, "6: Consume el mensaje", $techn="Redis protocol", $tags="", $link="")
+Rel(SismoReportaAQP.BackendSismoReporta.MóduloProcesamiento, SismoReportaAQP.Basededatos, "7: Verifica el UUID y persiste el reporte", $techn="SQL/TCP", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
+@enduml

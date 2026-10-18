@@ -1,0 +1,60 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Deployment View: SismoReporta AQP - Producción"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    subgraph 44 ["Smartphone del ciudadano"]
+      style 44 fill:#ffffff,stroke:#444444,color:#444444
+
+      45["<div style='font-weight: bold'>Aplicación móvil</div><div style='font-size: 70%; margin-top: 0px'>[Container: Flutter / React Native]</div><div style='font-size: 80%; margin-top:10px'>Registra reportes con<br />ubicación y fotografías;<br />funciona sin conexión y<br />sincroniza con reintentos<br />(backoff exponencial +<br />jitter).</div>"]
+      style 45 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      46[("<div style='font-weight: bold'>Almacenamiento local</div><div style='font-size: 70%; margin-top: 0px'>[Container: SQLite]</div><div style='font-size: 80%; margin-top:10px'>Reportes pendientes de<br />sincronización, con UUID y<br />estado.</div>")]
+      style 46 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    subgraph 48 ["Estación del operador"]
+      style 48 fill:#ffffff,stroke:#444444,color:#444444
+
+      49["<div style='font-weight: bold'>Panel web de operaciones</div><div style='font-size: 70%; margin-top: 0px'>[Container: SPA web]</div><div style='font-size: 80%; margin-top:10px'>Mapa de daños, filtros,<br />clasificación, estados y<br />asignación de brigadas.</div>"]
+      style 49 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    subgraph 50 ["Servidor de producción"]
+      style 50 fill:#ffffff,stroke:#444444,color:#444444
+
+      subgraph 51 ["Docker Compose"]
+        style 51 fill:#ffffff,stroke:#444444,color:#444444
+
+        52["<div style='font-weight: bold'>Nginx</div><div style='font-size: 70%; margin-top: 0px'>[Infrastructure Node: Nginx]</div><div style='font-size: 80%; margin-top:10px'>Reverse proxy: TLS y rate<br />limiting.</div>"]
+        style 52 fill:#ffffff,stroke:#444444,color:#444444
+        53["<div style='font-weight: bold'>Backend SismoReporta</div><div style='font-size: 70%; margin-top: 0px'>[Container: Python / FastAPI]</div><div style='font-size: 80%; margin-top:10px'>Monolito modular con API REST<br />(ADR-001); el worker interno<br />corre dentro del mismo<br />artefacto (ADR-003).</div>"]
+        style 53 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        56["<div style='font-weight: bold'>Cola persistente</div><div style='font-size: 70%; margin-top: 0px'>[Container: Redis 7]</div><div style='font-size: 80%; margin-top:10px'>Mensajes de reportes<br />(metadata y referencias, sin<br />fotos binarias); persistencia<br />AOF.</div>"]
+        style 56 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        58[("<div style='font-weight: bold'>Base de datos</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL 16 + PostGIS]</div><div style='font-size: 80%; margin-top:10px'>Reportes, estados, UUID,<br />brigadas y geolocalización.</div>")]
+        style 58 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        60["<div style='font-weight: bold'>Almacenamiento de evidencia</div><div style='font-size: 70%; margin-top: 0px'>[Container: MinIO (API S3)]</div><div style='font-size: 80%; margin-top:10px'>Fotografías de daños,<br />referenciadas por URI desde<br />el reporte.</div>"]
+        style 60 fill:#438dd5,stroke:#2e6295,color:#ffffff
+        62["<div style='font-weight: bold'>Prometheus</div><div style='font-size: 70%; margin-top: 0px'>[Infrastructure Node: Prometheus]</div><div style='font-size: 80%; margin-top:10px'>Métricas de ingesta y<br />longitud de la cola.</div>"]
+        style 62 fill:#ffffff,stroke:#444444,color:#444444
+        63["<div style='font-weight: bold'>Grafana</div><div style='font-size: 70%; margin-top: 0px'>[Infrastructure Node: Grafana]</div><div style='font-size: 80%; margin-top:10px'>Tablero operacional y<br />alertas.</div>"]
+        style 63 fill:#ffffff,stroke:#444444,color:#444444
+      end
+
+    end
+
+    45-. "<div>Guarda y lee reportes<br />pendientes</div><div style='font-size: 70%'>[SQLite]</div>" .->46
+    45-. "<div>Envía reportes con UUID</div><div style='font-size: 70%'>[HTTPS/JSON]</div>" .->53
+    49-. "<div>Consulta reportes y los<br />gestiona</div><div style='font-size: 70%'>[HTTPS/REST]</div>" .->53
+    53-. "<div>Publica y consume reportes</div><div style='font-size: 70%'>[Redis protocol]</div>" .->56
+    53-. "<div>Persiste y consulta reportes</div><div style='font-size: 70%'>[SQL/TCP]</div>" .->58
+    53-. "<div>Guarda evidencia fotográfica</div><div style='font-size: 70%'>[API S3 / HTTPS]</div>" .->60
+    45-. "<div>Envía reportes</div><div style='font-size: 70%'>[HTTPS/443]</div>" .->52
+    49-. "<div>Consulta y gestiona reportes</div><div style='font-size: 70%'>[HTTPS/443]</div>" .->52
+    52-. "<div>Reenvía las solicitudes</div><div style='font-size: 70%'>[HTTP]</div>" .->53
+    62-. "<div>Lee métricas</div><div style='font-size: 70%'>[HTTP /metrics]</div>" .->53
+    62-. "<div>Lee la longitud de la cola</div><div style='font-size: 70%'>[Redis protocol]</div>" .->56
+    63-. "<div>Consulta métricas</div><div style='font-size: 70%'>[HTTP]</div>" .->62
+
+  end
