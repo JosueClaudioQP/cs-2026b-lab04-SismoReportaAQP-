@@ -1,0 +1,11 @@
+stateDiagram-v2
+    [*] --> BORRADOR : SyncManager.registrar()
+    BORRADOR --> ENCOLADO : encolar()
+    ENCOLADO --> ENCOLADO : reintentar() [error de red]
+    ENCOLADO --> RECIBIDO : marcarRecibido() [UUID no duplicado]
+    RECIBIDO --> VERIFICADO : verificar() [evidencia y ubicación válidas]
+    VERIFICADO --> ATENDIDO : marcarAtendido() [brigada asignada]
+    ATENDIDO --> [*]
+    note right of RECIBIDO
+        timestamp_servidor se fija aquí
+    end note

@@ -1,4 +1,4 @@
-# Laboratorio 04: Arquitectura de Software – SismoReporta AQP
+# Laboratorio 05: Arquitectura de Software – SismoReporta AQP
 
 > **Universidad Nacional de San Agustín de Arequipa (UNSA)**  
 > **Facultad de Ingeniería de Producción y Servicios — Escuela Profesional de Ingeniería de Sistemas**  
@@ -214,3 +214,30 @@ python docs/architecture/diagramas/despliegue.py
 
 ### B. Vista de Despliegue Alternativa en PlantUML
 En caso de restricciones de entorno local, se encuentra disponible [`docs/architecture/diagramas/despliegue.puml`](file:///home/gocardi/Unsa/cs/cs-2026b-lab04-SismoReportaAQP-/docs/architecture/diagramas/despliegue.puml), el cual puede visualizarse y compilarse directamente en [PlantUML Web Server](http://www.plantuml.com/plantuml) o mediante la extensión de PlantUML en VS Code / Antigravity IDE.
+
+## 7. Diseño UML (Lab 05)
+
+Historia crítica: [`historia.md`](docs/design/historia.md) · Caso 8 – enviar un reporte sin señal y sincronizarlo.
+
+**Máquina de estados del Reporte (E3):**
+
+```mermaid
+stateDiagram-v2
+    [*] --> BORRADOR : SyncManager.registrar()
+    BORRADOR --> ENCOLADO : encolar()
+    ENCOLADO --> ENCOLADO : reintentar() [error de red]
+    ENCOLADO --> RECIBIDO : marcarRecibido() [UUID no duplicado]
+    RECIBIDO --> VERIFICADO : verificar() [evidencia y ubicación válidas]
+    VERIFICADO --> ATENDIDO : marcarAtendido() [brigada asignada]
+    ATENDIDO --> [*]
+```
+
+| Entregable | Archivo | Imagen |
+|---|---|---|
+| E1 Clases | [`clases.puml`](docs/design/clases.puml) | [`clases-reportes.png`](docs/design/img/clases-reportes.png) |
+| E2 Secuencia | [`secuencia-sincronizar-reporte.puml`](docs/design/secuencia-sincronizar-reporte.puml) | [`png`](docs/design/img/secuencia-sincronizar-reporte.png) |
+| E3 Estados | [`estados-reporte.mmd`](docs/design/estados-reporte.mmd) | (render nativo arriba) |
+| E4 Actividades | [`actividades-priorizar-asignar.puml`](docs/design/actividades-priorizar-asignar.puml) | [`png`](docs/design/img/actividades-priorizar-asignar.png) |
+| E5 Paquetes | [`paquetes.puml`](docs/design/paquetes.puml) | [`png`](docs/design/img/paquetes.png) |
+| E6 Round-trip | [`round-trip.md`](docs/design/round-trip.md) · [`src/reportes/`](src/reportes/dominio.py) | [`classes_reportes.png`](docs/design/img/classes_reportes.png) |
+| E7 Consistencia y bitácora | [`consistencia.md`](docs/design/consistencia.md) · [`bitacora-ia.md`](docs/design/bitacora-ia.md) | — |

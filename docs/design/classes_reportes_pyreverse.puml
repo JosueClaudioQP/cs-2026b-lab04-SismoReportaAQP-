@@ -1,0 +1,52 @@
+@startuml classes_reportes
+set namespaceSeparator none
+class "Brigada" as reportes.dominio.Brigada {
+  disponible : bool
+  id : UUID
+  nombre : str
+}
+class "ColaPersistenteAdapter" as reportes.dominio.ColaPersistenteAdapter {
+  {abstract}consumir() -> Reporte
+  {abstract}publicar(r: Reporte) -> None
+}
+class "ColaReportes" as reportes.dominio.ColaReportes {
+  {abstract}consumir() -> Reporte
+  {abstract}publicar(r: Reporte) -> None
+}
+class "EstadoReporte" as reportes.dominio.EstadoReporte {
+  name
+}
+class "Evidencia" as reportes.dominio.Evidencia {
+  tamano_bytes : int
+  url_referencia : str
+  uuid : UUID
+}
+class "NivelDanio" as reportes.dominio.NivelDanio {
+  name
+}
+class "Reporte" as reportes.dominio.Reporte {
+  brigada : Brigada | None
+  descripcion : str
+  estado
+  evidencias : list[Evidencia]
+  latitud : Decimal
+  longitud : Decimal
+  nivel_danio : NivelDanio | None
+  timestamp_dispositivo : datetime
+  timestamp_servidor : datetime | None
+  uuid : UUID
+  asignar_brigada(b: Brigada) -> None
+  encolar() -> None
+  marcar_atendido() -> None
+  marcar_recibido(ts: datetime) -> None
+  reintentar() -> None
+  verificar(nivel: NivelDanio) -> None
+}
+class "RepositorioReportes" as reportes.dominio.RepositorioReportes {
+  {abstract}buscar(uuid: UUID) -> Reporte
+  {abstract}existe(uuid: UUID) -> bool
+  {abstract}guardar(r: Reporte) -> None
+}
+reportes.dominio.ColaPersistenteAdapter --|> reportes.dominio.ColaReportes
+reportes.dominio.Reporte --> reportes.dominio.EstadoReporte : estado
+@enduml

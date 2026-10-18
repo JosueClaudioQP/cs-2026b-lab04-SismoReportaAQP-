@@ -1,0 +1,23 @@
+@startuml paquetes
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam packageStyle rectangle
+title SismoReporta AQP – Paquetes del monolito modular (vista de desarrollo)
+package "cliente-movil" as MOV
+package "backend (monolito modular)" {
+  package "ingesta" as ING
+  package "operaciones" as OPE
+  package "procesamiento" as PRO
+  package "compartido" as COM
+}
+MOV ..> ING : HTTPS: usa ApiController.recibirReporte
+ING ..> COM : usa Reporte y ColaReportes (puerto)
+PRO ..> COM : usa ColaReportes y RepositorioReportes (puertos)
+OPE ..> COM : usa Reporte y RepositorioReportes (puerto)
+note bottom of COM
+  Regla (ADR-001): sin dependencias cíclicas.
+  ingesta, operaciones y procesamiento NO se
+  dependen entre sí; se comunican por puertos
+  y la cola persistente.
+end note
+@enduml

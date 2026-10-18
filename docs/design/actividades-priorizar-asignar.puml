@@ -1,0 +1,35 @@
+@startuml actividades-priorizar-asignar
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ActivityBackgroundColor #EEF2F8
+skinparam ActivityBorderColor #1A3A5C
+|Sistema|
+start
+:Recibe reporte VERIFICADO;
+:Calcula prioridad (nivel de daño y zona);
+if (¿Prioridad alta?) then (sí)
+  :Marca como urgente en el mapa;
+else (no)
+  :Agrega a la lista normal;
+endif
+|Operador|
+:Revisa el mapa y elige el reporte;
+|Sistema|
+if (¿Hay brigada disponible?) then (sí)
+  fork
+    :Asigna brigada al reporte;
+  fork again
+    :Notifica al brigadista;
+  end fork
+  |Brigadista|
+  :Atiende el incidente en terreno;
+  :Registra el resultado;
+  |Sistema|
+  :Marca el reporte como ATENDIDO;
+  stop
+else (no)
+  |Operador|
+  :Mantiene el reporte en cola y reevalúa;
+  stop
+endif
+@enduml
