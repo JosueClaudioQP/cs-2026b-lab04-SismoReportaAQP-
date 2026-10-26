@@ -1,0 +1,22 @@
+@startuml packages_lab07
+set namespaceSeparator none
+package "reportes.despues" as reportes.despues {
+}
+package "reportes.despues.estados" as reportes.despues.estados {
+}
+package "reportes.despues.eventos" as reportes.despues.eventos {
+}
+package "reportes.despues.ia" as reportes.despues.ia {
+}
+package "reportes.despues.modelo" as reportes.despues.modelo {
+}
+package "reportes.despues.servicio" as reportes.despues.servicio {
+}
+package "reportes.despues.transporte" as reportes.despues.transporte {
+}
+reportes.despues.modelo --> reportes.despues.estados
+reportes.despues.servicio --> reportes.despues.eventos
+reportes.despues.servicio --> reportes.despues.ia
+reportes.despues.servicio --> reportes.despues.modelo
+reportes.despues.servicio --> reportes.despues.transporte
+@enduml

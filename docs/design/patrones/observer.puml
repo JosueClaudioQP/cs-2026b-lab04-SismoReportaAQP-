@@ -1,0 +1,26 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title Observer - panel y auditoría
+class Publicador <<Subject>> {
+ +suscribir(suscriptor)
+ +publicar(evento)
+}
+abstract class Suscriptor <<Observer>> {
+ +actualizar(evento)
+}
+class PanelObserver <<ConcreteObserver>>
+class AuditoriaObserver <<ConcreteObserver>>
+class EventoAceptado <<Event>> {
+ +reporte_id: str
+}
+Publicador o--> "0..*" Suscriptor
+Publicador ..> EventoAceptado
+Suscriptor <|-- PanelObserver
+Suscriptor <|-- AuditoriaObserver
+@enduml

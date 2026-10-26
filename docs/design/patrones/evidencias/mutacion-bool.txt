@@ -1,0 +1,30 @@
+ENSAYO DELIBERADO DE REGRESIÓN: se cambia el tipo exacto por isinstance.
+La mutación se ejecuta en una copia temporal de trabajo y se revierte.
+
+.....F....                                                               [100%]
+=================================== FAILURES ===================================
+_ test_guardrails_bloquean_respuestas_invalidas[despues-{"severidad":"LEVE","confianza":true}] _
+
+m = <module 'reportes.despues.servicio' from '/workspace/scratch/19becfaa8c91/lab07/src/reportes/despues/servicio.py'>
+respuesta = '{"severidad":"LEVE","confianza":true}'
+
+    @pytest.mark.parametrize("respuesta", [
+        "no JSON", "[]", "x"*257,
+        '{"severidad":"SEGURO","confianza":0.8}',
+        '{"severidad":"LEVE","confianza":2}',
+        '{"severidad":"LEVE","confianza":true}',
+        '{"severidad":"LEVE","confianza":NaN}',
+        '{"severidad":"LEVE","confianza":"0.9"}',
+        '{"severidad":"LEVE","confianza":0.9,"habitable":true}',
+        '{"severidad":["LEVE"],"confianza":0.9}',
+    ])
+    def test_guardrails_bloquean_respuestas_invalidas(m, respuesta):
+        s = m.ServicioReportes(llm=ClienteLLMFalso(respuesta))
+>       with pytest.raises(ValueError, match="Guardrail"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests/test_comportamiento.py:160: Failed
+=========================== short test summary info ============================
+FAILED tests/test_comportamiento.py::test_guardrails_bloquean_respuestas_invalidas[despues-{"severidad":"LEVE","confianza":true}]
+1 failed, 9 passed, 76 deselected in 0.03s

@@ -1,0 +1,18 @@
+{
+  "antes": {
+    "sloc": 95,
+    "bloques": 12,
+    "promedio_radon": 4.25,
+    "metodos": 10,
+    "promedio_metodos": 4.1,
+    "maximo_metodo": 13
+  },
+  "despues": {
+    "sloc": 230,
+    "bloques": 81,
+    "promedio_radon": 1.8271604938271604,
+    "metodos": 54,
+    "promedio_metodos": 1.4814814814814814,
+    "maximo_metodo": 5
+  }
+}

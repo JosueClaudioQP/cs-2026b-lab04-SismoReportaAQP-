@@ -1,0 +1,35 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title Sincronización simulada - 202 y procesamiento separados
+actor Ciudadano
+participant ServicioReportes as S
+participant ConReintentos as D
+participant RegionalAdapter as A
+participant APIRegionalSDK as SDK
+participant Publicador as P
+participant Reporte as R
+Ciudadano -> S : registrar(reporte)
+S -> R : encolar()
+note over S : Pendiente en memoria (alcance del laboratorio)
+Ciudadano -> S : sincronizar(reporte)
+S -> D : enviar(reporte)
+loop máximo 3 intentos, solo TimeoutError
+ D -> A : enviar(reporte)
+ A -> SDK : publicar(payload)
+ SDK --> A : {codigo: 202}
+ A --> D : 202
+end
+D --> S : 202
+S -> P : publicar(EventoAceptado)
+note over P : Notifica PanelObserver y AuditoriaObserver
+S --> Ciudadano : ACEPTADO
+note over R : Sigue ENCOLADO hasta ejecutar el procesamiento
+Ciudadano -> S : procesar(reporte) [simulación worker]
+S -> R : marcar_recibido()
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title Strategy - selección de canal de envío
+class ServicioReportes <<Context>> {
+ +sincronizar(reporte, canal, conectado)
+}
+abstract class CanalEnvio <<Strategy>> {
+ +enviar(reporte): int
+}
+class RegionalAdapter <<ConcreteStrategy>>
+class AlternaAdapter <<ConcreteStrategy>>
+ServicioReportes --> CanalEnvio : usa vía fábrica y decorador
+CanalEnvio <|-- RegionalAdapter
+CanalEnvio <|-- AlternaAdapter
+@enduml

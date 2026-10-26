@@ -1,0 +1,91 @@
+@startuml clases-reportes
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classBackgroundColor #EEF2F8
+skinparam classBorderColor #1A3A5C
+title SismoReporta AQP – Módulos Ingesta y Operaciones (diseño)
+
+class Reporte {
+  - uuid: UUID
+  - timestampDispositivo: DateTime
+  - timestampServidor: DateTime
+  - latitud: Decimal
+  - longitud: Decimal
+  - descripcion: String
+  - nivelDanio: NivelDanio
+  - estado: EstadoReporte
+  + encolar(): void
+  + reintentar(): void
+  + marcarRecibido(ts: DateTime): void
+  + verificar(nivel: NivelDanio): void
+  + asignarBrigada(b: Brigada): void
+  + marcarAtendido(): void
+}
+class Evidencia {
+  - uuid: UUID
+  - urlReferencia: String
+  - tamanoBytes: int
+}
+class Brigada {
+  - id: UUID
+  - nombre: String
+  - disponible: bool
+}
+enum EstadoReporte {
+  BORRADOR
+  ENCOLADO
+  RECIBIDO
+  VERIFICADO
+  ATENDIDO
+}
+enum NivelDanio {
+  LEVE
+  MODERADO
+  SEVERO
+}
+class SyncManager <<cliente móvil>> {
+  - intentos: int
+  + registrar(r: Reporte): void
+  + sincronizarPendientes(): void
+  + calcularBackoff(intento: int): int
+  + marcarSincronizado(uuid: UUID): void
+}
+class ApiController <<api>> {
+  + recibirReporte(r: Reporte): int
+}
+class ServicioIngesta <<servicio>> {
+  + validarUuid(uuid: UUID): bool
+  + recibir(r: Reporte): bool
+}
+class WorkerProcesamiento <<servicio>> {
+  + procesar(): void
+}
+class ServicioOperaciones <<servicio>> {
+  + verificar(reporteId: UUID, nivel: NivelDanio): void
+  + asignarBrigada(reporteId: UUID, brigadaId: UUID): void
+}
+interface ColaReportes <<puerto>> {
+  + publicar(r: Reporte): void
+  + consumir(): Reporte
+}
+interface RepositorioReportes <<puerto>> {
+  + existe(uuid: UUID): bool
+  + guardar(r: Reporte): void
+  + buscar(uuid: UUID): Reporte
+}
+class ColaPersistenteAdapter <<adaptador>>
+
+Reporte "1" *-- "0..*" Evidencia : adjunta >
+Reporte "0..*" -- "0..1" Brigada : atendido por >
+Reporte "1" --> "1" EstadoReporte
+Reporte "1" --> "0..1" NivelDanio
+ColaReportes <|.. ColaPersistenteAdapter
+SyncManager "1" ..> "0..*" Reporte : envía
+ApiController "1" --> "1" ServicioIngesta
+ServicioIngesta ..> ColaReportes
+WorkerProcesamiento ..> ColaReportes
+WorkerProcesamiento ..> RepositorioReportes
+ServicioOperaciones ..> RepositorioReportes
+@enduml
+

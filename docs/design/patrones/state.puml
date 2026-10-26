@@ -1,0 +1,37 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title State - ciclo de vida del reporte
+class Reporte <<Context>> {
+ -_estado: Estado
+ +encolar()
+ +reintentar()
+ +marcar_recibido()
+ +verificar(nivel)
+ +marcar_atendido()
+}
+class Estado <<State>> {
+ +encolar(reporte)
+ +reintentar(reporte)
+ +marcar_recibido(reporte)
+ +verificar(reporte, nivel)
+ +marcar_atendido(reporte)
+}
+class Borrador <<ConcreteState>>
+class Encolado <<ConcreteState>>
+class Recibido <<ConcreteState>>
+class Verificado <<ConcreteState>>
+class Atendido <<ConcreteState>>
+Reporte *--> Estado
+Estado <|-- Borrador
+Estado <|-- Encolado
+Estado <|-- Recibido
+Estado <|-- Verificado
+Estado <|-- Atendido
+note bottom of Estado : Prohíbe por defecto todas las transiciones.
+@enduml

@@ -1,0 +1,6 @@
+Sin señal: PENDIENTE
+Con señal: ACEPTADO ENCOLADO
+Procesado: RECIBIDO
+Sugerencia simulada: Sugerencia(severidad='MODERADO', confianza=0.8, requiere_revision=True)
+Estado final: ATENDIDO
+Observadores: ['panel:demo-001:ACEPTADO', 'auditoria:demo-001:ACEPTADO']

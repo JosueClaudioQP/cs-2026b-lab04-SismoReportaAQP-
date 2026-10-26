@@ -1,0 +1,36 @@
+src/reportes/antes/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+src/reportes/antes/servicio.py
+    LOC: 110
+    LLOC: 97
+    SLOC: 95
+    Comments: 1
+    Single comments: 1
+    Multi: 3
+    Blank: 11
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 1%
+        (C + M % L): 4%
+** Total **
+    LOC: 110
+    LLOC: 97
+    SLOC: 95
+    Comments: 1
+    Single comments: 1
+    Multi: 3
+    Blank: 11
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 1%
+        (C + M % L): 4%

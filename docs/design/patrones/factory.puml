@@ -1,0 +1,27 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title Factory - fábrica simple por registro
+class FabricaCanales <<RegistryFactory>> {
+ -_creadores: dict
+ +registrar(nombre, creador)
+ +crear(nombre): CanalEnvio
+}
+class ServicioReportes <<Client>>
+abstract class CanalEnvio <<Product>>
+class RegionalAdapter <<ConcreteProduct>>
+class AlternaAdapter <<ConcreteProduct>>
+ServicioReportes --> FabricaCanales
+FabricaCanales ..> CanalEnvio : crea
+CanalEnvio <|-- RegionalAdapter
+CanalEnvio <|-- AlternaAdapter
+note bottom of FabricaCanales
+Variante por registro solicitada en la guía.
+No es Factory Method GoF por herencia.
+end note
+@enduml

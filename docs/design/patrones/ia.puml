@@ -1,0 +1,30 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title IA aislada - sugerencia revisable
+class ServicioReportes
+class ClasificadorSeveridad
+abstract class ProveedorLLM <<Strategy>>
+class LLMAdapter <<Adapter>>
+class LocalAdapter <<Adapter>>
+class ConCache <<Decorator>>
+abstract class Guardrail <<Chain>>
+class Sugerencia {
+ +severidad: str
+ +confianza: float
+ +requiere_revision: bool = True
+}
+ServicioReportes --> ClasificadorSeveridad
+ClasificadorSeveridad --> ProveedorLLM
+ClasificadorSeveridad --> Guardrail
+ClasificadorSeveridad ..> Sugerencia
+ProveedorLLM <|-- LLMAdapter
+ProveedorLLM <|-- LocalAdapter
+ProveedorLLM <|-- ConCache
+ConCache o--> ProveedorLLM
+@enduml

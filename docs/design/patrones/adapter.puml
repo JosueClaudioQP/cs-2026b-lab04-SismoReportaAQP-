@@ -1,0 +1,25 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title Adapter - dos contratos externos
+abstract class CanalEnvio <<Target>> {
+ +enviar(reporte): int
+}
+class RegionalAdapter <<Adapter>>
+class AlternaAdapter <<Adapter>>
+class APIRegionalSDK <<Adaptee>> {
+ +publicar(datos): dict
+}
+class APIAlternaClient <<Adaptee>> {
+ +send(payload): int
+}
+CanalEnvio <|-- RegionalAdapter
+CanalEnvio <|-- AlternaAdapter
+RegionalAdapter --> APIRegionalSDK
+AlternaAdapter --> APIAlternaClient
+@enduml

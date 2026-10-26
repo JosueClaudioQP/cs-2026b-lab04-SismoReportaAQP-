@@ -1,0 +1,2 @@
+OK: 27 clases Python coinciden con pyreverse.
+Esta comprobación cubre existencia; no acredita automáticamente composición ni multiplicidad UML.

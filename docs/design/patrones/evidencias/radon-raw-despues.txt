@@ -1,0 +1,96 @@
+src/reportes/despues/transporte.py
+    LOC: 51
+    LLOC: 45
+    SLOC: 40
+    Comments: 0
+    Single comments: 3
+    Multi: 3
+    Blank: 5
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 6%
+src/reportes/despues/ia.py
+    LOC: 77
+    LLOC: 67
+    SLOC: 66
+    Comments: 1
+    Single comments: 2
+    Multi: 0
+    Blank: 9
+    - Comment Stats
+        (C % L): 1%
+        (C % S): 2%
+        (C + M % L): 1%
+src/reportes/despues/__init__.py
+    LOC: 0
+    LLOC: 0
+    SLOC: 0
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 0
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+src/reportes/despues/modelo.py
+    LOC: 22
+    LLOC: 20
+    SLOC: 19
+    Comments: 0
+    Single comments: 0
+    Multi: 0
+    Blank: 3
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+src/reportes/despues/estados.py
+    LOC: 43
+    LLOC: 37
+    SLOC: 36
+    Comments: 0
+    Single comments: 1
+    Multi: 0
+    Blank: 6
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+src/reportes/despues/servicio.py
+    LOC: 48
+    LLOC: 43
+    SLOC: 42
+    Comments: 0
+    Single comments: 1
+    Multi: 0
+    Blank: 5
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+src/reportes/despues/eventos.py
+    LOC: 33
+    LLOC: 30
+    SLOC: 27
+    Comments: 0
+    Single comments: 1
+    Multi: 0
+    Blank: 5
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 0%
+** Total **
+    LOC: 274
+    LLOC: 242
+    SLOC: 230
+    Comments: 1
+    Single comments: 8
+    Multi: 3
+    Blank: 33
+    - Comment Stats
+        (C % L): 0%
+        (C % S): 0%
+        (C + M % L): 1%

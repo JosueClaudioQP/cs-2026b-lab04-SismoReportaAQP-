@@ -1,4 +1,4 @@
-# SismoReporta AQP – Arquitectura de Software (Laboratorios 04, 05 y 06)
+# SismoReporta AQP – Arquitectura y diseño (Laboratorios 04 a 07)
 
 > **Universidad Nacional de San Agustín de Arequipa (UNSA)**  
 > **Facultad de Ingeniería de Producción y Servicios — Escuela Profesional de Ingeniería de Sistemas**  
@@ -12,6 +12,7 @@
 | 04 | Arquitectura: drivers, matriz, ADR, diagramas | [1 a 6](#1-información-del-proyecto-y-caso-asignado) | `docs/architecture/` | — |
 | 05 | UML como código (clases, secuencia, estados, actividades, paquetes) | [7](#7-diseño-uml-lab-05) | `docs/design/`, `src/` | `v0.5-diseno` |
 | 06 | Modelo C4 con Structurizr DSL | [8](#8-arquitectura-c4-lab-06) | `docs/architecture/c4/` | `v0.6-c4` |
+| 07 | Refactorización hacia patrones, IA simulada y pruebas | [9](#9-patrones-de-diseño-lab-07) | `docs/design/patrones/` | `v0.7-patrones` (pendiente de publicar) |
 
 ---
 
@@ -244,7 +245,7 @@ stateDiagram-v2
 
 | Entregable | Archivo | Imagen |
 |---|---|---|
-| E1 Clases | [`clases.puml`](docs/design/clases.puml) | [`clases-reportes.png`](docs/design/img/clases-reportes.png) |
+| E1 Clases | [`clases-lab05.puml`](docs/design/clases-lab05.puml) | [`clases-reportes.png`](docs/design/img/clases-reportes.png) |
 | E2 Secuencia | [`secuencia-sincronizar-reporte.puml`](docs/design/secuencia-sincronizar-reporte.puml) | [`png`](docs/design/img/secuencia-sincronizar-reporte.png) |
 | E3 Estados | [`estados-reporte.mmd`](docs/design/estados-reporte.mmd) | (render nativo arriba) |
 | E4 Actividades | [`actividades-priorizar-asignar.puml`](docs/design/actividades-priorizar-asignar.puml) | [`png`](docs/design/img/actividades-priorizar-asignar.png) |
@@ -300,7 +301,7 @@ graph LR
 | E7 | Revisión, explicación y bitácora | — | [`revision-c4.md`](docs/architecture/c4/revision-c4.md) · [`explicacion.md`](docs/architecture/c4/explicacion.md) · [`bitacora-ia.md`](docs/architecture/c4/bitacora-ia.md) · [`cuestionario.md`](docs/architecture/c4/cuestionario.md) |
 | E8 | Revisión cruzada | — | [`revision-cruzada.md`](docs/architecture/c4/revision-cruzada.md) |
 
-El nivel 4 (código) no se dibuja de nuevo: es el diagrama de clases del Lab 05, [`docs/design/clases.puml`](docs/design/clases.puml). Los componentes del nivel 3 coinciden con los paquetes de [`docs/design/paquetes.puml`](docs/design/paquetes.puml).
+La vista histórica de clases del Lab 05 se conserva en [`clases-lab05.puml`](docs/design/clases-lab05.puml). El archivo [`clases.puml`](docs/design/clases.puml) ahora muestra el experimento del Lab 07. Los componentes del nivel 3 coinciden con los paquetes de [`docs/design/paquetes.puml`](docs/design/paquetes.puml).
 
 **Reproducción** (Java 17+ y [Structurizr CLI](https://github.com/structurizr/cli/releases)):
 
@@ -313,4 +314,74 @@ java -jar plantuml.jar -tpng -o ../img export/*.puml
 # Interactivo: docker run -it --rm -p 8080:8080 -v "$PWD":/usr/local/structurizr structurizr/lite
 ```
 
-Una GitHub Action ([`c4.yml`](.github/workflows/c4.yml)) valida el modelo en cada push y regenera las imágenes.
+La automatización C4 indicada originalmente no estaba incluida en `main`. El Lab 07 incorpora su propia [GitHub Action](.github/workflows/lab07.yml) para pruebas y complejidad; no regenera vistas C4.
+
+
+
+---
+
+## 9. Patrones de diseño (Lab 07)
+
+Se refactoriza el flujo de sincronización de SismoReporta AQP, con una sugerencia
+simulada de severidad que siempre requiere revisión del operador. El laboratorio
+es ejecutable sin servicios externos. La implementación histórica de los Labs
+04–06 sigue siendo una arquitectura objetivo; este experimento no implementa
+SQLite/Redis/PostgreSQL ni sustituye el sistema completo.
+
+- [Guía de integración y entrega](LEEME_LAB07.md).
+- [Entregables E1–E8 y diagramas](docs/design/patrones/README.md).
+- [Versión antes](src/reportes/antes/servicio.py) y [versión después](src/reportes/despues/servicio.py).
+- [Pruebas de caracterización](tests/test_comportamiento.py) y [pruebas de patrones](tests/test_patrones.py).
+- [ADR-006: patrones adoptados y rechazados](docs/architecture/adr/006-patrones-diseno-lab07.md).
+- [Bitácora de asistencia](docs/design/patrones/bitacora-ia.md) y [cuestionario](docs/design/patrones/cuestionario.md).
+
+La guía pide un ADR-005 para E8, pero ese número ya corresponde a notificación
+SMS en este repositorio: se usa ADR-006 sin sobrescribirlo.
+
+### Olor → patrón → prueba
+| Olor | Patrón | Prueba demostrativa |
+|---|---|---|
+| if/elif por canal | Strategy | test_open_closed_nuevo_canal_por_registro |
+| Contratos distintos de SDK | Adapter | test_adapters_equivalentes_y_payload |
+| Construcción ligada a variantes | Factory por registro | test_open_closed_nuevo_canal_por_registro |
+| Reintentos y caché mezclados | Decorator | test_dos_timeouts_y_exito, test_cache_ia |
+| Condicionales de estado | State | test_state_matriz_completa |
+| Notificaciones acopladas | Observer | test_observer_tercer_suscriptor |
+| Validaciones IA mezcladas | Chain of Responsibility | test_guardrails_bloquean_respuestas_invalidas |
+
+Seis patrones GoF y fábrica por registro. No se confunde esta fábrica simple con
+Factory Method estricto. Singleton/Abstract Factory se rechazan en [olores.md](docs/design/patrones/olores.md).
+
+### Métricas medidas
+| Indicador | Antes | Después |
+|---|---:|---:|
+| SLOC | 95 | 230 |
+| Bloques Radon (clases + métodos) | 12 | 81 |
+| CC promedio Radon | 4.25 | 1.83 |
+| Métodos/funciones | 10 | 54 |
+| CC promedio solo métodos | 4.10 | 1.48 |
+| CC máxima de un método | 13 | 5 |
+
+
+Sincronizar: CC 11→4; sugerir_severidad: CC 13→1 en la fachada, con la lógica
+redistribuida entre colaboradores. El costo de más clases y SLOC se analiza en
+[metricas.md](docs/design/patrones/metricas.md); no se afirma una mejora de rendimiento.
+
+### Ejecutar
+```bash
+python -m pip install -r requirements-lab07.txt
+python -m pytest -v
+python tools/demo_lab07.py
+python tools/verificar_complejidad.py
+python tools/medir_lab07.py
+```
+Resultado de la preparación: **118 passed**. Las 43 combinaciones de caracterización
+se ejecutan para cada versión (86); otras 32 verifican patrones y transiciones.
+La [evidencia](docs/design/patrones/evidencias/pytest-final.txt) conserva la salida real.
+La [Action](.github/workflows/lab07.yml) falla si las pruebas fallan o un método de
+`despues/` supera CC 10. La versión antes se excluye del umbral porque es el ejemplo
+intencional de complejidad; todas las pruebas sí cubren ambas versiones.
+
+### Revisión y publicación
+La revisión entre integrantes, sus PR y el tag `v0.7-patrones` están pendientes de
+realizar por el equipo; no se presentan como efectuados. Ver [revisión cruzada](docs/design/patrones/revision-cruzada.md).

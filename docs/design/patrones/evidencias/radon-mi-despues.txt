@@ -1,0 +1,7 @@
+src/reportes/despues/transporte.py - A (72.89)
+src/reportes/despues/ia.py - A (47.66)
+src/reportes/despues/__init__.py - A (100.00)
+src/reportes/despues/modelo.py - A (100.00)
+src/reportes/despues/estados.py - A (62.07)
+src/reportes/despues/servicio.py - A (49.94)
+src/reportes/despues/eventos.py - A (100.00)

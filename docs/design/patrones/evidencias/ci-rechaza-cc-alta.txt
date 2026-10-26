@@ -1,0 +1,3 @@
+ENSAYO DELIBERADO: archivo temporal con CC 12 (borrado tras la prueba).
+src/reportes/despues/_regresion_cc.py:1 demasiado_complejo: 12
+Exit code: 1

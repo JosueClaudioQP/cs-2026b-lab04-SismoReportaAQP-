@@ -98,3 +98,4 @@ class ColaPersistenteAdapter(ColaReportes):
 
     def consumir(self) -> Reporte:
         raise NotImplementedError("Integrar con la cola persistente (Redis AOF)")
+

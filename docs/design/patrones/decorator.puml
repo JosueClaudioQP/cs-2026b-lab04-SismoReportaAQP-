@@ -1,0 +1,32 @@
+@startuml
+!pragma layout smetana
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #EDF5FA
+skinparam classBorderColor #234A63
+skinparam ArrowColor #234A63
+title Decorator - reintentos y caché
+abstract class CanalEnvio <<Component>> {
+ +enviar(reporte): int
+}
+class RegionalAdapter <<ConcreteComponent>>
+class ConReintentos <<Decorator>> {
+ -_max_intentos: int
+ +enviar(reporte): int
+}
+CanalEnvio <|-- RegionalAdapter
+CanalEnvio <|-- ConReintentos
+ConReintentos o--> CanalEnvio : interno
+abstract class ProveedorLLM <<Component>> {
+ +completar(prompt): str
+}
+class LLMAdapter <<ConcreteComponent>>
+class ConCache <<Decorator>> {
+ -_cache: dict
+ +completar(prompt): str
+}
+ProveedorLLM <|-- LLMAdapter
+ProveedorLLM <|-- ConCache
+ConCache o--> ProveedorLLM : interno
+@enduml

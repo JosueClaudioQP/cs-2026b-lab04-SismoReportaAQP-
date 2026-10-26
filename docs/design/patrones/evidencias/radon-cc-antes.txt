@@ -1,0 +1,16 @@
+src/reportes/antes/servicio.py
+    M 88:4 ServicioReportes.sugerir_severidad - C (13)
+    M 53:4 ServicioReportes.sincronizar - C (11)
+    C 41:0 ServicioReportes - B (7)
+    M 42:4 ServicioReportes.__init__ - A (4)
+    C 11:0 Reporte - A (3)
+    M 34:4 Reporte.marcar_atendido - A (3)
+    M 14:4 Reporte.encolar - A (2)
+    M 19:4 Reporte.reintentar - A (2)
+    M 23:4 Reporte.marcar_recibido - A (2)
+    M 28:4 Reporte.verificar - A (2)
+    M 48:4 ServicioReportes.registrar - A (1)
+    M 84:4 ServicioReportes.procesar - A (1)
+
+12 blocks (classes, functions, methods) analyzed.
+Average complexity: A (4.25)

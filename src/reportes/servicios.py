@@ -73,3 +73,4 @@ class ServicioOperaciones:
 
     def asignar_brigada(self, reporte_id: UUID, brigada_id: UUID) -> None:
         raise NotImplementedError("Buscar la Brigada, asignarla al reporte y solicitar el SMS (ADR-005)")
+

@@ -1,0 +1,129 @@
+@startuml classes_lab07
+set namespaceSeparator none
+class "AlternaAdapter" as reportes.despues.transporte.AlternaAdapter {
+  enviar(reporte)
+}
+class "Atendido" as reportes.despues.estados.Atendido {
+  nombre : ATENDIDO
+}
+class "AuditoriaObserver" as reportes.despues.eventos.AuditoriaObserver {
+  actualizar(evento)
+}
+class "Borrador" as reportes.despues.estados.Borrador {
+  nombre : BORRADOR
+  encolar(reporte)
+}
+class "CanalEnvio" as reportes.despues.transporte.CanalEnvio {
+  {abstract}enviar(reporte: DatosReporte) -> int
+}
+class "ClasificadorSeveridad" as reportes.despues.ia.ClasificadorSeveridad {
+  sugerir(descripcion)
+}
+class "ConCache" as reportes.despues.ia.ConCache {
+  completar(prompt)
+}
+class "ConReintentos" as reportes.despues.transporte.ConReintentos {
+  enviar(reporte)
+}
+class "ConfianzaValida" as reportes.despues.ia.ConfianzaValida {
+  aplicar(datos)
+}
+class "Encolado" as reportes.despues.estados.Encolado {
+  nombre : ENCOLADO
+  marcar_recibido(reporte)
+  reintentar(reporte)
+}
+class "Estado" as reportes.despues.estados.Estado {
+  nombre : NoneType
+  encolar(reporte)
+  marcar_atendido(reporte)
+  marcar_recibido(reporte)
+  reintentar(reporte)
+  verificar(reporte, nivel)
+}
+class "EventoAceptado" as reportes.despues.eventos.EventoAceptado {
+  reporte_id : str
+}
+class "FabricaCanales" as reportes.despues.transporte.FabricaCanales {
+  crear(nombre)
+  registrar(nombre, creador)
+}
+class "FormatoJSON" as reportes.despues.ia.FormatoJSON {
+  aplicar(texto)
+}
+class "Guardrail" as reportes.despues.ia.Guardrail {
+  {abstract}aplicar(valor)
+  validar(valor)
+}
+class "LLMAdapter" as reportes.despues.ia.LLMAdapter {
+  completar(prompt)
+}
+class "LocalAdapter" as reportes.despues.ia.LocalAdapter {
+  completar(prompt)
+}
+class "PanelObserver" as reportes.despues.eventos.PanelObserver {
+  actualizar(evento)
+}
+class "ProveedorLLM" as reportes.despues.ia.ProveedorLLM {
+  {abstract}completar(prompt: str) -> str
+}
+class "Publicador" as reportes.despues.eventos.Publicador {
+  publicar(evento: EventoAceptado)
+  suscribir(suscriptor: Suscriptor)
+}
+class "Recibido" as reportes.despues.estados.Recibido {
+  nombre : RECIBIDO
+  verificar(reporte, nivel)
+}
+class "RegionalAdapter" as reportes.despues.transporte.RegionalAdapter {
+  enviar(reporte)
+}
+class "Reporte" as reportes.despues.modelo.Reporte {
+  estado
+  encolar()
+  marcar_atendido()
+  marcar_recibido()
+  reintentar()
+  verificar(nivel)
+}
+class "ServicioReportes" as reportes.despues.servicio.ServicioReportes {
+  clasificador
+  eventos : list
+  fabrica
+  pendientes : dict
+  publicador
+  procesar(reporte: Reporte)
+  registrar(reporte: Reporte)
+  sincronizar(reporte: Reporte, canal, conectado)
+  sugerir_severidad(descripcion)
+}
+class "SeveridadPermitida" as reportes.despues.ia.SeveridadPermitida {
+  aplicar(datos)
+}
+class "Suscriptor" as reportes.despues.eventos.Suscriptor {
+  {abstract}actualizar(evento: EventoAceptado)
+}
+class "Verificado" as reportes.despues.estados.Verificado {
+  nombre : VERIFICADO
+  marcar_atendido(reporte)
+}
+reportes.despues.estados.Atendido --|> reportes.despues.estados.Estado
+reportes.despues.estados.Borrador --|> reportes.despues.estados.Estado
+reportes.despues.estados.Encolado --|> reportes.despues.estados.Estado
+reportes.despues.estados.Recibido --|> reportes.despues.estados.Estado
+reportes.despues.estados.Verificado --|> reportes.despues.estados.Estado
+reportes.despues.eventos.AuditoriaObserver --|> reportes.despues.eventos.Suscriptor
+reportes.despues.eventos.PanelObserver --|> reportes.despues.eventos.Suscriptor
+reportes.despues.ia.ConCache --|> reportes.despues.ia.ProveedorLLM
+reportes.despues.ia.ConfianzaValida --|> reportes.despues.ia.Guardrail
+reportes.despues.ia.FormatoJSON --|> reportes.despues.ia.Guardrail
+reportes.despues.ia.LLMAdapter --|> reportes.despues.ia.ProveedorLLM
+reportes.despues.ia.LocalAdapter --|> reportes.despues.ia.ProveedorLLM
+reportes.despues.ia.SeveridadPermitida --|> reportes.despues.ia.Guardrail
+reportes.despues.transporte.AlternaAdapter --|> reportes.despues.transporte.CanalEnvio
+reportes.despues.transporte.ConReintentos --|> reportes.despues.transporte.CanalEnvio
+reportes.despues.transporte.RegionalAdapter --|> reportes.despues.transporte.CanalEnvio
+reportes.despues.eventos.Publicador --* reportes.despues.servicio.ServicioReportes : publicador
+reportes.despues.ia.ClasificadorSeveridad --* reportes.despues.servicio.ServicioReportes : clasificador
+reportes.despues.transporte.FabricaCanales --* reportes.despues.servicio.ServicioReportes : fabrica
+@enduml
