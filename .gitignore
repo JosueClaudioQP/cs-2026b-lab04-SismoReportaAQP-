@@ -3,3 +3,12 @@ __pycache__/
 *$py.class
 .ipynb_checkpoints/
 .DS_Store
+
+
+# Lab07
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+plantuml.jar
