@@ -1,0 +1,15 @@
+digraph utilidad {
+graph [rankdir=LR, bgcolor="white", nodesep=.25, ranksep=.40, pad=.2];
+node [shape=box, style="rounded,filled", fillcolor="#eaf2f8", fontname="Arial", fontsize=12, color="#bfd3e2", margin=".14,.12"];
+edge [color="#7792a5"];
+u [label="Utilidad\nSismoReporta AQP",fillcolor="#12364b",fontcolor="white"];
+r [label="Rendimiento"]; d [label="Disponibilidad"]; s [label="Seguridad"]; m [label="Modificabilidad"];
+u -> {r d s m};
+q1 [label="QA08-01 · Aceptación (H,H)\np95 ≤ 2 s · 20 000 reportes"];
+q6 [label="QA08-06 · Drenaje (H,H)\nCola vacía ≤ 20 min tras ráfaga"];
+q2 [label="QA08-02 · Offline (H,H)\n0 pérdidas y 0 duplicados"];
+q3 [label="QA08-03 · SMS (H,M)\n0 asignaciones revertidas"];
+q4 [label="QA08-04 · RBAC (H,M)\n0 escrituras sin permiso"];
+q5 [label="QA08-05 · Nuevo canal (M,L)\n0 cambios en servicio central"];
+r -> {q1 q6}; d -> {q2 q3}; s -> q4; m -> q5;
+}

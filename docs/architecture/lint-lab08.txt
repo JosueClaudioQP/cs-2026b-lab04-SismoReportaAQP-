@@ -1,0 +1,16 @@
+=============
+Import Linter
+=============
+
+
+---------
+Contracts
+---------
+
+Analyzed 7 files, 6 dependencies.
+---------------------------------
+
+FF-01 Dominio no depende de aplicacion (ADR-001) KEPT
+FF-02 Aplicacion no conoce adaptadores concretos (ADR-001 y ADR-005) KEPT
+
+Contracts: 2 kept, 0 broken.

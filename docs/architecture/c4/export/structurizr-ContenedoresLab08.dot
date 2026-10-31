@@ -1,0 +1,39 @@
+digraph {
+  compound=true
+  graph [fontname="Arial", rankdir=LR, ranksep=1.0, nodesep=1.0]
+  node [fontname="Arial", shape=box, margin="0.4,0.3"]
+  edge [fontname="Arial"]
+  label=<<br /><font point-size="34">Container View: SismoReporta AQP</font>>
+
+  1 [id=1,shape=rect, label=<<font point-size="34">Ciudadano</font><br /><font point-size="19">[Person]</font><br /><br /><font point-size="24">Registra daños aun sin red.</font>>, style=filled, color="#0c2534", fillcolor="#12364b", fontcolor="#ffffff"]
+  2 [id=2,shape=rect, label=<<font point-size="34">Coordinador</font><br /><font point-size="19">[Person]</font><br /><br /><font point-size="24">Clasifica y asigna brigadas<br />con autorización.</font>>, style=filled, color="#0c2534", fillcolor="#12364b", fontcolor="#ffffff"]
+  15 [id=15,shape=rect, label=<<font point-size="34">Proveedor SMS</font><br /><font point-size="19">[Software System]</font><br /><br /><font point-size="24">Externo: su caída no revierte<br />asignaciones [QA08-03].</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+  16 [id=16,shape=rect, label=<<font point-size="34">Servicio de mapas</font><br /><font point-size="19">[Software System]</font><br /><br /><font point-size="24">Capa visual; no es requisito<br />para guardar coordenadas.</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+
+  subgraph cluster_4 {
+    margin=25
+    label=<<font point-size="24"><br />SismoReporta AQP</font><br /><font point-size="19">[Software System]</font>>
+    labelloc=b
+    color="#444444"
+    fontcolor="#444444"
+    fillcolor="#444444"
+
+    13 [id=13,shape=cylinder, label=<<font point-size="34">Persistencia<br />transaccional</font><br /><font point-size="19">[Container: PostgreSQL 16 + PostGIS]</font><br /><br /><font point-size="24">Inbox con UUID único;<br />reportes; outbox SMS. Commit<br />antes del 202 [QA08-01,<br />QA08-02, QA08-03].</font>>, style=filled, color="#0e5766", fillcolor="#147d92", fontcolor="#ffffff"]
+    14 [id=14,shape=rect, label=<<font point-size="34">Evidencia</font><br /><font point-size="19">[Container: MinIO / S3]</font><br /><br /><font point-size="24">Carga diferida; estado<br />EVIDENCIA_PENDIENTE;<br />referencia por UUID [QA08-01,<br />QA08-02].</font>>, style=filled, color="#0e5766", fillcolor="#147d92", fontcolor="#ffffff"]
+    5 [id=5,shape=rect, label=<<font point-size="34">Aplicación móvil</font><br /><font point-size="19">[Container: Flutter / React Native]</font><br /><br /><font point-size="24">Sync Manager: backoff, jitter<br />y UUID estable [QA08-01,<br />QA08-02].</font>>, style=filled, color="#0e5766", fillcolor="#147d92", fontcolor="#ffffff"]
+    6 [id=6,shape=cylinder, label=<<font point-size="34">Persistencia local</font><br /><font point-size="19">[Container: SQLite]</font><br /><br /><font point-size="24">Pendiente hasta ACK; no borrar<br />antes de confirmación<br />[QA08-02].</font>>, style=filled, color="#0e5766", fillcolor="#147d92", fontcolor="#ffffff"]
+    7 [id=7,shape=rect, label=<<font point-size="34">Panel de operaciones</font><br /><font point-size="19">[Container: SPA web]</font><br /><br /><font point-size="24">Permisos por rol; sin<br />asignación desde rol ciudadano<br />[QA08-04].</font>>, style=filled, color="#0e5766", fillcolor="#147d92", fontcolor="#ffffff"]
+    8 [id=8,shape=rect, label=<<font point-size="34">Backend modular</font><br /><font point-size="19">[Container: Python / FastAPI]</font><br /><br /><font point-size="24">Un artefacto: API y<br />consumidores internos. Acepta<br />después del commit [QA08-01,<br />QA08-06].</font>>, style=filled, color="#0e5766", fillcolor="#147d92", fontcolor="#ffffff"]
+  }
+
+  1 -> 5 [id=17, label=<<font point-size="24">Registra reporte</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  2 -> 7 [id=19, label=<<font point-size="24">Asigna brigada</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  5 -> 6 [id=21, label=<<font point-size="24">Guarda y confirma<br />pendientes</font><br /><font point-size="19">[SQLite]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  5 -> 8 [id=22, label=<<font point-size="24">Envía metadata / evidencia<br />por separado</font><br /><font point-size="19">[HTTPS/JSON]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  7 -> 8 [id=23, label=<<font point-size="24">Consulta y solicita<br />operaciones autorizadas</font><br /><font point-size="19">[HTTPS/REST]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  7 -> 16 [id=24, label=<<font point-size="24">Solicita tiles</font><br /><font point-size="19">[HTTPS]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  8 -> 13 [id=26, label=<<font point-size="24">Commit inbox; procesar;<br />outbox</font><br /><font point-size="19">[SQL/TCP]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  8 -> 14 [id=27, label=<<font point-size="24">Guarda fotos diferidas y<br />enlaza UUID</font><br /><font point-size="19">[S3 / HTTPS]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  8 -> 15 [id=28, label=<<font point-size="24">Despacha outbox; timeout<br />no revierte asignación</font><br /><font point-size="19">[HTTPS/JSON]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+
+}

@@ -1,0 +1,16 @@
+[importlinter]
+root_package = sismo_lab08
+include_external_packages = False
+[importlinter:contract:capas]
+name = FF-01 Dominio no depende de aplicacion (ADR-001)
+type = layers
+layers =
+    sismo_lab08.aplicacion
+    sismo_lab08.dominio
+[importlinter:contract:adaptadores]
+name = FF-02 Aplicacion no conoce adaptadores concretos (ADR-001 y ADR-005)
+type = forbidden
+source_modules =
+    sismo_lab08.aplicacion
+forbidden_modules =
+    sismo_lab08.adaptadores

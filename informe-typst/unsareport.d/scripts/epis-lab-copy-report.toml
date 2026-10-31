@@ -1,0 +1,6 @@
+alias = "epis-lab:copy-report"
+description = "Copy compiled report to a formatted filename based on exported metadata (reads UNSAREP_CONFIG_EPIS_LAB_FILENAME_FORMAT)"
+origin = "@unsareport/epis-lab"
+
+[commands]
+  any = "bun run --tsconfig-override tsconfig.unsareport.json components/@unsareport/epis-lab/scripts/copy_report.ts"

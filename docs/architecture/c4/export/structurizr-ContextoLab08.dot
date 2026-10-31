@@ -1,0 +1,19 @@
+digraph {
+  compound=true
+  graph [fontname="Arial", rankdir=LR, ranksep=1.0, nodesep=1.0]
+  node [fontname="Arial", shape=box, margin="0.4,0.3"]
+  edge [fontname="Arial"]
+  label=<<br /><font point-size="34">System Context View: SismoReporta AQP</font>>
+
+  1 [id=1,shape=rect, label=<<font point-size="34">Ciudadano</font><br /><font point-size="19">[Person]</font><br /><br /><font point-size="24">Registra daños aun sin red.</font>>, style=filled, color="#0c2534", fillcolor="#12364b", fontcolor="#ffffff"]
+  15 [id=15,shape=rect, label=<<font point-size="34">Proveedor SMS</font><br /><font point-size="19">[Software System]</font><br /><br /><font point-size="24">Externo: su caída no revierte<br />asignaciones [QA08-03].</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+  16 [id=16,shape=rect, label=<<font point-size="34">Servicio de mapas</font><br /><font point-size="19">[Software System]</font><br /><br /><font point-size="24">Capa visual; no es requisito<br />para guardar coordenadas.</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+  2 [id=2,shape=rect, label=<<font point-size="34">Coordinador</font><br /><font point-size="19">[Person]</font><br /><br /><font point-size="24">Clasifica y asigna brigadas<br />con autorización.</font>>, style=filled, color="#0c2534", fillcolor="#12364b", fontcolor="#ffffff"]
+  4 [id=4,shape=rect, label=<<font point-size="34">SismoReporta AQP</font><br /><font point-size="19">[Software System]</font><br /><br /><font point-size="24">20 000 reportes por hora;<br />metadata primero, evidencia<br />diferida.</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+
+  1 -> 4 [id=18, label=<<font point-size="24">Registra reporte</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  2 -> 4 [id=20, label=<<font point-size="24">Asigna brigada</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  4 -> 16 [id=25, label=<<font point-size="24">Solicita tiles</font><br /><font point-size="19">[HTTPS]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  4 -> 15 [id=29, label=<<font point-size="24">Despacha outbox; timeout<br />no revierte asignación</font><br /><font point-size="19">[HTTPS/JSON]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+
+}

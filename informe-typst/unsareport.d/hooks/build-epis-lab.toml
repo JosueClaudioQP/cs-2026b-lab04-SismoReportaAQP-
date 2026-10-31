@@ -1,0 +1,3 @@
+standard = "build"
+after = ["epis-lab:copy-report"]
+origin = "@unsareport/epis-lab"

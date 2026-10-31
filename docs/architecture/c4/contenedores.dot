@@ -1,0 +1,20 @@
+digraph c4 {
+graph [rankdir=TB,bgcolor="white",pad=.3,nodesep=.4,ranksep=.6];
+node [shape=box,style="rounded,filled",fillcolor="#eaf2f8",fontname="Arial",fontsize=12,margin=".18,.14",color="#bfd3e2"];
+edge [fontname="Arial",fontsize=10,color="#6d879a"];
+c [label="Ciudadano",shape=ellipse]; o [label="Coordinador",shape=ellipse];
+subgraph cluster_s {label="SismoReporta AQP · monolito modular";fontname="Arial";color="#b7d0df";style=rounded;
+mov [label="App móvil\nSync Manager + UUID\n[QA08-01, QA08-02]"];
+loc [label="SQLite local\nPendiente hasta ACK\n[QA08-02]",shape=cylinder];
+panel [label="Panel web\nOperaciones por rol\n[QA08-04]"];
+api [label="Backend Python / FastAPI\nIngesta · Operaciones · Worker interno\nUn artefacto desplegable\n[QA08-01,03,04,05,06]",fillcolor="#147d92",fontcolor="white"];
+db [label="PostgreSQL + PostGIS\nInbox + reportes + outbox SMS\nUUID único / commit antes de 202\n[QA08-01,02,03,06]",shape=cylinder];
+foto [label="MinIO / S3\nEvidencia diferida por UUID\n[QA08-01, QA08-02]",shape=folder];
+}
+sms [label="Proveedor SMS\nSistema externo",fillcolor="#eeeeee"];
+map [label="Mapas\nSistema externo",fillcolor="#eeeeee"];
+c -> mov; o -> panel; mov -> loc [label="guardar / ACK"]; mov -> api [label="HTTPS metadata / fotos"];
+panel -> api [label="HTTPS / RBAC"]; panel -> map [label="tiles HTTPS"];
+api -> db [label="SQL transaccional"];api -> foto [label="S3 HTTPS"];
+api -> sms [label="HTTPS · outbox"];
+}

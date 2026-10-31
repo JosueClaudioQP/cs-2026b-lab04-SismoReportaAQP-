@@ -1,0 +1,5 @@
+origin = "@unsareport/epis-lab"
+env_prefix = "EPIS_LAB"
+
+[values]
+  filename_format = "{course_abbr} - LAB{lab_number} - {shortnames_chain}.pdf"

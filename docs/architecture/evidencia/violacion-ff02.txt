@@ -1,0 +1,33 @@
+Rama local aislada: prueba-violacion-e5
+Import añadido: from sismo_lab08.adaptadores import SQLiteRepositorio
+Exit code: 1
+=============
+Import Linter
+=============
+
+
+---------
+Contracts
+---------
+
+Analyzed 7 files, 7 dependencies.
+---------------------------------
+
+FF-01 Dominio no depende de aplicacion (ADR-001) KEPT
+FF-02 Aplicacion no conoce adaptadores concretos (ADR-001 y ADR-005) BROKEN
+
+Contracts: 1 kept, 1 broken.
+
+
+----------------
+Broken contracts
+----------------
+
+FF-02 Aplicacion no conoce adaptadores concretos (ADR-001 y ADR-005)
+--------------------------------------------------------------------
+
+sismo_lab08.aplicacion is not allowed to import sismo_lab08.adaptadores:
+
+-   sismo_lab08.aplicacion.ingesta -> sismo_lab08.adaptadores (l.1)
+
+

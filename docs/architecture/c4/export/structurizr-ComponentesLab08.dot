@@ -1,0 +1,43 @@
+digraph {
+  compound=true
+  graph [fontname="Arial", rankdir=LR, ranksep=1.0, nodesep=1.0]
+  node [fontname="Arial", shape=box, margin="0.4,0.3"]
+  edge [fontname="Arial"]
+  label=<<br /><font point-size="34">Component View: SismoReporta AQP - Backend modular</font>>
+
+  15 [id=15,shape=rect, label=<<font point-size="34">Proveedor SMS</font><br /><font point-size="19">[Software System]</font><br /><br /><font point-size="24">Externo: su caída no revierte<br />asignaciones [QA08-03].</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+
+  subgraph cluster_4 {
+    margin=25
+    label=<<font point-size="24"><br />SismoReporta AQP</font><br /><font point-size="19">[Software System]</font>>
+    labelloc=b
+    color="#444444"
+    fontcolor="#444444"
+    fillcolor="#444444"
+
+    subgraph cluster_8 {
+      margin=25
+      label=<<font point-size="24"><br />Backend modular</font><br /><font point-size="19">[Container: Python / FastAPI]</font>>
+      labelloc=b
+      color="#444444"
+      fontcolor="#444444"
+      fillcolor="#444444"
+
+      10 [id=10,shape=rect, label=<<font point-size="34">Operaciones</font><br /><font point-size="19">[Component: Módulo Python]</font><br /><br /><font point-size="24">RBAC; asignación y outbox SMS<br />atómicos [QA08-03, QA08-04].</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+      11 [id=11,shape=rect, label=<<font point-size="34">Procesamiento interno</font><br /><font point-size="19">[Component: Worker Python]</font><br /><br /><font point-size="24">Inbox: reclamar, procesar y<br />confirmar; reintento con lease<br />[QA08-06].</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+      12 [id=12,shape=rect, label=<<font point-size="34">Dominio y puertos</font><br /><font point-size="19">[Component: Protocol / Strategy / Adapter]</font><br /><br /><font point-size="24">Reglas y contratos sin<br />infraestructura concreta<br />[QA08-05].</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+      9 [id=9,shape=rect, label=<<font point-size="34">Ingesta</font><br /><font point-size="19">[Component: Módulo Python]</font><br /><br /><font point-size="24">Valida UUID y contenido;<br />transacción de inbox [QA08-01,<br />QA08-02].</font>>, style=filled, color="#444444", fillcolor="#ffffff", fontcolor="#444444"]
+    }
+
+    13 [id=13,shape=cylinder, label=<<font point-size="34">Persistencia<br />transaccional</font><br /><font point-size="19">[Container: PostgreSQL 16 + PostGIS]</font><br /><br /><font point-size="24">Inbox con UUID único;<br />reportes; outbox SMS. Commit<br />antes del 202 [QA08-01,<br />QA08-02, QA08-03].</font>>, style=filled, color="#0e5766", fillcolor="#147d92", fontcolor="#ffffff"]
+  }
+
+  9 -> 12 [id=31, label=<<font point-size="24">Usa contratos</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  10 -> 12 [id=32, label=<<font point-size="24">Usa contratos</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  11 -> 12 [id=33, label=<<font point-size="24">Usa contratos</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  9 -> 13 [id=34, label=<<font point-size="24">Persiste inbox antes del<br />ACK</font><br /><font point-size="19">[SQL]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  10 -> 13 [id=35, label=<<font point-size="24">Asigna y crea outbox en<br />transacción</font><br /><font point-size="19">[SQL]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  11 -> 13 [id=36, label=<<font point-size="24">Procesa inbox y SMS<br />pendientes</font><br /><font point-size="19">[SQL]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+  11 -> 15 [id=37, label=<<font point-size="24">Reintenta aviso</font><br /><font point-size="19">[HTTPS/JSON]</font>>, style="dashed", color="#444444", fontcolor="#444444"]
+
+}
