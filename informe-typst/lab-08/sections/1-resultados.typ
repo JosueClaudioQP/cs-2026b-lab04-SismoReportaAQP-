@@ -259,7 +259,7 @@ table.header([Verificación],[Degradación detectada]),
 ]
 
 
-*Resultado:* 130 pruebas aprobadas. En la rama aislada `prueba-violacion-e5`, importar un adaptador desde Ingesta produjo FF-02 BROKEN (salida 1); retirarlo restauró 2 contratos conservados (salida 0). El workflow está preparado, pero no ejecutado remotamente. Los contratos abarcan `sismo_lab08`, no todo el código heredado.
+*Resultado:* 130 pruebas aprobadas. En la rama aislada `prueba-violacion-e5`, importar un adaptador desde Ingesta produjo FF-02 BROKEN (salida 1); retirarlo restauró 2 contratos conservados (salida 0). El workflow pasó en GitHub Actions: 130 pruebas, 2 contratos, medición y validación C4 aprobados. Los contratos abarcan `sismo_lab08`, no todo el código heredado.
 
 
 #block[
@@ -276,12 +276,12 @@ table.header([Revisión con IA],[Verificación y resolución]),
 [ACK y persistencia],
 [Se separó ACEPTADO de PROCESADO; UUID no sustituye almacenamiento durable. Se contrastó con replay y reinicios.],
 [Entrega],
-[Se distinguieron pruebas locales, evaluación cruzada y publicación remota; no se inventaron issues ni Actions en verde.]
+[Se distinguieron pruebas locales y evaluación cruzada; después se verificó la publicación en main y el workflow real aprobado.]
 )
 ]
 
 
-La bitácora completa conserva siete puntos de análisis de esta sesión, incluidos el falso positivo y sus correcciones. Los anexos incluyen escenarios de seis partes, iteraciones, ADR, C4, riesgos y logs. Pendientes externos: evaluación cruzada, revisión de ambos integrantes, PR, Actions en verde, tag `v0.8-arquitectura` y envío al aula.
+La bitácora conserva siete puntos de diseño, el falso positivo corregido y la verificación posterior de publicación. Los anexos incluyen escenarios de seis partes, iteraciones, ADR, C4, riesgos y logs. Pendientes externos: evaluación cruzada, revisión de ambos integrantes, PR individuales, tag `v0.8-arquitectura` y envío al aula.
 
 
 == Fuentes principales
@@ -289,5 +289,7 @@ La bitácora completa conserva siete puntos de análisis de esta sesión, inclui
 
 Guía Lab08 de Construcción de Software, UNSA, 2026-B; #link("https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-")[repositorio del grupo], commit 529b7b6; recursos docentes AgroConecta como referencia metodológica; Kazman, Klein y Clements (2000), #link("https://insights.sei.cmu.edu/library/atam-method-for-architecture-evaluation/")[ATAM]. Las fuentes y archivos de reproducción completos acompañan el paquete.
 
-]
 
+
+*Evidencia publicada:* #link("https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/tree/main")[repositorio en main] · #link("https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/commit/5868f55f7a4cedb7db68d971206dc509e193fce6")[commit 5868f55] · #link("https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/actions/runs/41244312700")[GitHub Actions aprobado].
+]

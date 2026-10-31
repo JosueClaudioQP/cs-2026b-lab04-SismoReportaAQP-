@@ -14,6 +14,5 @@
 
 - La principal validación pendiente es el servidor real: a 60 ms medios de ingesta el modelo incumple. Antes de desplegar se deben medir I/O y endpoint, revisar autenticación y probar restauración.
 
-- Se completaron las evidencias locales, los tres ADR propuestos y el C4 validado. La evaluación cruzada y las actividades de GitHub/Aula Virtual requieren evidencia externa para cerrar la entrega.
+- Los entregables se publicaron en main y GitHub Actions aprobó las pruebas y la validación C4. Faltan la evaluación cruzada, los PR individuales, la revisión de los ADR, la etiqueta y el envío al Aula Virtual.
 ]
-

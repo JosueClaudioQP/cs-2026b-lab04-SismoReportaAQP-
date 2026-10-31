@@ -34,7 +34,7 @@ Workflow preparado: [.github/workflows/fitness.yml](.github/workflows/fitness.ym
 
 ![fitness-functions](https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/actions/workflows/fitness.yml/badge.svg)
 
-Los entregables del Lab08 se publican directamente en main por solicitud del usuario. El workflow se ejecuta al hacer push; su resultado debe verificarse en Actions. Falta la evaluación cruzada real y los PR individuales de cada integrante; la autoevaluación no los sustituye. No se ha enviado el informe al Aula Virtual. La etiqueta v0.8-arquitectura queda pendiente hasta la revisión final.
+Los entregables del Lab08 ya se publicaron en main y fitness-functions pasó en GitHub Actions. La evidencia enlazada corresponde al commit de código verificado. Falta la evaluación cruzada, los PR individuales, la revisión de los ADR, la etiqueta y el envío al Aula Virtual.
 
 ## Fitness y alcance
 FF-01/02 controlan el paquete experimental sismo_lab08, no todo el código heredado. FF-03 p95, FF-04 persistencia/replay, FF-05 SMS, FF-06 RBAC y FF-07 drenaje. Los tests heredados de Lab07 también se ejecutan. Ver docs/architecture/evidencia/violacion-ff02.txt y violacion-revertida.txt.
@@ -49,3 +49,11 @@ El README histórico de los Labs04-07 se conserva en [README-Labs04-07.md](READM
 
 Fuente editable: [informe-typst/lab-08/main.typ](informe-typst/lab-08/main.typ). Para recompilar consulta [informe-typst/LEEME.md](informe-typst/LEEME.md).
 
+## Evidencia publicada del Lab08
+
+- Repositorio: [JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-](https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/tree/main).
+- Commit de código y experimentos: [`5868f55`](https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/commit/5868f55f7a4cedb7db68d971206dc509e193fce6).
+- GitHub Actions: [fitness-functions aprobado](https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/actions/runs/41244312700); incluye 130 pruebas, 2 contratos de imports, medición y validación C4.
+- [Informe PDF](Informe_Lab08_SismoReporta_AQP.pdf) y [fuente Typst](informe-typst/lab-08/main.typ).
+
+Los entregables se subieron directamente a main por solicitud del usuario. La revisión cruzada, los PR individuales, la revisión de los ADR, la etiqueta y el envío al Aula Virtual siguen pendientes; no se presentan como actividades completadas.

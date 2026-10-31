@@ -38,3 +38,8 @@ Fecha: 31/10/2026. Herramienta: asistente de IA de esta conversación. Son siete
 - Resolución: Adjuntar logs y marcar evaluación cruzada, PR, tag y Aula Virtual como pendientes.
 
 El falso positivo IA-02 fue corregido antes de redactar las decisiones. Los integrantes deben revisar los ADR propuestos y ratificar o cambiar estas resoluciones.
+
+## IA-08: publicación solicitada por el usuario
+- Acción: subir los entregables a main y adjuntar el repositorio al informe.
+- Verificación: commit [5868f55](https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/commit/5868f55f7a4cedb7db68d971206dc509e193fce6); [ejecución real de Actions aprobada](https://github.com/JosueClaudioQP/cs-2026b-lab04-SismoReportaAQP-/actions/runs/41244312700).
+- Resultado: código, escenarios, pruebas y modelo C4 publicados; informe actualizado con enlaces. Las actividades de terceros y la entrega al Aula Virtual no se afirman completadas.

@@ -12,3 +12,6 @@ __pycache__/
 .pytest_cache/
 *.pyc
 plantuml.jar
+
+# PDFs generados al recompilar el informe Typst
+/informe-typst/lab-08/*.pdf
